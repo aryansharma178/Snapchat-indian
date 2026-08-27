@@ -1,6 +1,7 @@
 {
   "name": "Indian Snapchat",
   "short_name": "Indian Snapchat",
+  "description": "A social chat and messaging app",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
