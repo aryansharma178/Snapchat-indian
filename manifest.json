@@ -1,0 +1,9 @@
+{
+  "name": "Indian Snapchat",
+  "short_name": "Indian Snapchat",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": []
+}
