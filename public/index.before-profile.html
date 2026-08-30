@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snapchat Indian</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:#111;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    text-align:center;
+}
+
+.box{
+    width:92%;
+    max-width:420px;
+    margin:40px auto;
+    background:#222;
+    padding:25px;
+    border-radius:18px;
+}
+
+h1{
+    margin-top:25px;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:13px;
+    margin:7px 0;
+    border:0;
+    border-radius:9px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:13px;
+    margin:8px 0;
+    border:0;
+    border-radius:9px;
+    background:#FFFC00;
+    color:#111;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:disabled{
+    opacity:.5;
+}
+
+.hidden{
+    display:none;
+}
+
+.status{
+    min-height:22px;
+    margin:8px 0;
+}
+
+.error{
+    color:#ff5555;
+}
+
+.success{
+    color:#55ff88;
+}
+
+.info{
+    color:#aaa;
+    font-size:13px;
+    line-height:1.5;
+}
+
+.checkrow{
+    text-align:left;
+    background:#333;
+    padding:12px;
+    border-radius:10px;
+    margin:10px 0;
+}
+
+.checkrow input{
+    width:auto;
+    margin-right:8px;
+}
+
+#messages{
+    text-align:left;
+    max-height:260px;
+    overflow-y:auto;
+    margin-top:15px;
+}
+
+.message{
+    background:#333;
+    padding:8px;
+    margin:6px 0;
+    border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>👻 Snapchat Indian</h1>
+
+<!-- =========================
+     NAME + USERNAME
+========================= -->
+
+<div id="profileBox" class="box">
+
+    <h2>Create Your Profile</h2>
+
+    <input
+        id="name"
+        type="text"
+        placeholder="Enter your name"
+        maxlength="40"
+    >
+
+    <input
+        id="username"
+        type="text"
+        placeholder="Create username"
+        maxlength="20"
+    >
+
+    <button onclick="continueProfile()">
+        Continue
+    </button>
+
+    <p id="profileStatus" class="status"></p>
+
+</div>
+
+
+<!-- =========================
+     PHONE NUMBER
+========================= -->
+
+<div id="phoneBox" class="box hidden">
+
+    <h2>Verify Mobile Number</h2>
+
+    <p class="info">
+        Enter your mobile number to continue.
+    </p>
+
+    <input
+        id="phone"
+        type="tel"
+        placeholder="Mobile number"
+        maxlength="15"
+    >
+
+    <button onclick="sendOTP()">
+        Send OTP
+    </button>
+
+    <p id="phoneStatus" class="status"></p>
+
+</div>
+
+
+<!-- =========================
+     OTP
+========================= -->
+
+<div id="otpBox" class="box hidden">
+
+    <h2>Enter OTP</h2>
+
+    <p class="info">
+        Enter the 6-digit OTP sent to your mobile number.
+    </p>
+
+    <input
+        id="otp"
+        type="number"
+        placeholder="6-digit OTP"
+        maxlength="6"
+    >
+
+    <button onclick="verifyOTP()">
+        Verify OTP
+    </button>
+
+    <p id="otpStatus" class="status"></p>
+
+</div>
+
+
+<!-- =========================
+     DATA PERMISSION
+========================= -->
+
+<div id="permissionBox" class="box hidden">
+
+    <h2>Allow All Data</h2>
+
+    <p class="info">
+        Before entering Snapchat Indian, please review and allow
+        the required app data permissions.
+    </p>
+
+    <div class="checkrow">
+        <label>
+            <input type="checkbox" id="allowData">
+            I agree to allow Snapchat Indian to use my app data.
+        </label>
+    </div>
+
+    <button onclick="allowAllData()">
+        Allow All Data & Continue
+    </button>
+
+    <p id="permissionStatus" class="status"></p>
+
+</div>
+
+
+<!-- =========================
+     SNAPCHAT INDIAN
+========================= -->
+
+<div id="chatBox" class="box hidden">
+
+    <h2>Welcome to Snapchat Indian 👻</h2>
+
+    <p id="welcomeText" class="success"></p>
+
+    <input
+        id="sender"
+        type="text"
+        placeholder="Your name"
+    >
+
+    <input
+        id="message"
+        type="text"
+        placeholder="Send a Snap/Message..."
+    >
+
+    <button onclick="sendSnap()">
+        Send
+    </button>
+
+    <div id="messages"></div>
+
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+let profileName = '';
+let profileUsername = '';
+let userPhone = '';
+
+/* =========================
+   PROFILE
+========================= */
+
+function continueProfile(){
+
+    const name =
+        document.getElementById('name').value.trim();
+
+    const username =
+        document.getElementById('username').value.trim();
+
+    const status =
+        document.getElementById('profileStatus');
+
+    if(!name){
+
+        status.className='status error';
+        status.textContent='Please enter your name';
+        return;
+    }
+
+    if(!username){
+
+        status.className='status error';
+        status.textContent='Please create a username';
+        return;
+    }
+
+    if(username.length < 3){
+
+        status.className='status error';
+        status.textContent='Username must be at least 3 characters';
+        return;
+    }
+
+    profileName = name;
+    profileUsername = username.replace(/^@/,'');
+
+    document.getElementById('profileBox')
+        .classList.add('hidden');
+
+    document.getElementById('phoneBox')
+        .classList.remove('hidden');
+}
+
+
+/* =========================
+   SEND OTP
+========================= */
+
+async function sendOTP(){
+
+    const phone =
+        document.getElementById('phone').value.trim();
+
+    const status =
+        document.getElementById('phoneStatus');
+
+    if(!phone){
+
+        status.className='status error';
+        status.textContent='Please enter your mobile number';
+        return;
+    }
+
+    const cleanPhone =
+        phone.replace(/\D/g,'');
+
+    if(cleanPhone.length < 10){
+
+        status.className='status error';
+        status.textContent='Please enter a valid mobile number';
+        return;
+    }
+
+    userPhone = cleanPhone;
+
+    status.className='status';
+    status.textContent='Sending OTP...';
+
+    try{
+
+        const response =
+            await fetch('/api/auth/send-otp',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    phone:userPhone
+                })
+            });
+
+        const data = await response.json();
+
+        if(data.success){
+
+            document.getElementById('phoneBox')
+                .classList.add('hidden');
+
+            document.getElementById('otpBox')
+                .classList.remove('hidden');
+
+            status.className='status success';
+            status.textContent='OTP sent successfully';
+
+        }else{
+
+            status.className='status error';
+            status.textContent =
+                data.message || 'Unable to send OTP';
+        }
+
+    }catch(error){
+
+        status.className='status error';
+        status.textContent='Server connection error';
+    }
+}
+
+
+/* =========================
+   VERIFY OTP
+========================= */
+
+async function verifyOTP(){
+
+    const otp =
+        document.getElementById('otp').value.trim();
+
+    const status =
+        document.getElementById('otpStatus');
+
+    if(!otp){
+
+        status.className='status error';
+        status.textContent='Please enter OTP';
+        return;
+    }
+
+    if(otp.length !== 6){
+
+        status.className='status error';
+        status.textContent='OTP must be 6 digits';
+        return;
+    }
+
+    status.className='status';
+    status.textContent='Verifying OTP...';
+
+    try{
+
+        const response =
+            await fetch('/api/auth/verify-otp',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    phone:userPhone,
+                    otp:otp,
+                    name:profileName,
+                    username:profileUsername
+                })
+            });
+
+        const data = await response.json();
+
+        if(data.success){
+
+            document.getElementById('otpBox')
+                .classList.add('hidden');
+
+            if(data.user.dataAllowed){
+
+                enterSnapchat(data.user);
+
+            }else{
+
+                document.getElementById('permissionBox')
+                    .classList.remove('hidden');
+            }
+
+        }else{
+
+            status.className='status error';
+            status.textContent =
+                data.message || 'Invalid OTP';
+        }
+
+    }catch(error){
+
+        status.className='status error';
+        status.textContent='Server connection error';
+    }
+}
+
+
+/* =========================
+   ALLOW ALL DATA
+========================= */
+
+async function allowAllData(){
+
+    const checkbox =
+        document.getElementById('allowData');
+
+    const status =
+        document.getElementById('permissionStatus');
+
+    if(!checkbox.checked){
+
+        status.className='status error';
+        status.textContent=
+            'Please allow the data permission to continue';
+
+        return;
+    }
+
+    status.className='status';
+    status.textContent='Saving permission...';
+
+    try{
+
+        const response =
+            await fetch('/api/auth/allow-data',{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    phone:userPhone
+                })
+            });
+
+        const data = await response.json();
+
+        if(data.success){
+
+            const user = {
+                name:profileName,
+                username:profileUsername,
+                phone:userPhone
+            };
+
+            enterSnapchat(user);
+
+        }else{
+
+            status.className='status error';
+            status.textContent =
+                data.message || 'Permission failed';
+        }
+
+    }catch(error){
+
+        status.className='status error';
+        status.textContent='Server connection error';
+    }
+}
+
+
+/* =========================
+   ENTER SNAPCHAT INDIAN
+========================= */
+
+function enterSnapchat(user){
+
+    document.getElementById('permissionBox')
+        .classList.add('hidden');
+
+    document.getElementById('chatBox')
+        .classList.remove('hidden');
+
+    const displayName =
+        user.name || profileName;
+
+    const username =
+        user.username || profileUsername;
+
+    document.getElementById('welcomeText')
+        .textContent =
+        'Welcome ' + displayName +
+        '  @' + username;
+
+    document.getElementById('sender')
+        .value = displayName;
+}
+
+
+/* =========================
+   SEND SNAP
+========================= */
+
+function sendSnap(){
+
+    const sender =
+        document.getElementById('sender').value.trim();
+
+    const message =
+        document.getElementById('message').value.trim();
+
+    if(!sender || !message){
+        return;
+    }
+
+    socket.emit('send_snap',{
+        sender:sender,
+        message:message
+    });
+
+    document.getElementById('message')
+        .value='';
+}
+
+
+/* =========================
+   RECEIVE SNAP
+========================= */
+
+socket.on('receive_snap',(data)=>{
+
+    const msgDiv =
+        document.getElementById('messages');
+
+    const div =
+        document.createElement('div');
+
+    div.className='message';
+
+    const bold =
+        document.createElement('b');
+
+    bold.textContent =
+        data.sender + ': ';
+
+    div.appendChild(bold);
+
+    div.appendChild(
+        document.createTextNode(data.message)
+    );
+
+    msgDiv.appendChild(div);
+
+    msgDiv.scrollTop =
+        msgDiv.scrollHeight;
+});
+
+</script>
+
+</body>
+</html>

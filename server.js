@@ -1,46 +1,51 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const { DatabaseSync } = require('node:sqlite');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const db = new DatabaseSync('./snapchat.db');
-
-db.exec(`
-    CREATE TABLE IF NOT EXISTS messages (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        sender TEXT,
-        message TEXT,
-        image TEXT,
-        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-`);
-
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json());
 app.use(express.static('public'));
 
-let onlineUsers = 0;
+const users = {};
+
+app.post('/api/auth/login', (req, res) => {
+    const { name, username } = req.body;
+    if (!name || !username) {
+        return res.json({ success: false, message: 'Name and username are required' });
+    }
+
+    const userId = username;
+    users[userId] = { name, username };
+
+    return res.json({
+        success: true,
+        message: 'Logged in successfully',
+        user: users[userId]
+    });
+});
 
 io.on('connection', (socket) => {
-    onlineUsers++;
-    io.emit('online_count', onlineUsers);
     console.log('User connected:', socket.id);
 
     socket.on('send_snap', (data) => {
-        io.emit('receive_snap', data);
+        io.emit('receive_snap', {
+            sender: data.sender || 'Anonymous',
+            message: data.message || ''
+        });
     });
 
     socket.on('disconnect', () => {
-        onlineUsers--;
-        io.emit('online_count', onlineUsers);
         console.log('User disconnected:', socket.id);
     });
 });
 
-server.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log('================================');
+    console.log('Jhapki Server Started Successfully');
+    console.log(`http://localhost:${PORT}`);
+    console.log('================================');
 });
-
