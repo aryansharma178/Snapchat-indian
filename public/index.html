@@ -3,367 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jhapki - Snapchat Chat Experience</title>
+    <title>Jhapki - Snapchat Experience</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="/icon.svg">
     <meta name="theme-color" content="#fffc00">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        
         .app-container { width: 100%; max-width: 420px; height: 100vh; background: #000; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
         @media(min-width: 450px) { .app-container { height: 90vh; border-radius: 24px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.8); } }
 
-        /* Login Screen */
         #login-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111; z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center; }
         #login-screen h2 { font-size: 28px; margin-bottom: 8px; color: #fffc00; }
         #login-screen p { color: #888; font-size: 14px; margin-bottom: 24px; }
         .input-box { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 15px; outline: none; margin-bottom: 14px; }
         .login-btn { width: 100%; padding: 14px; background: #fffc00; color: #000; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; }
 
-        /* Profile Bottom Sheet Modal */
-        #avatar-studio { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 110; display: none; flex-direction: column; justify-content: flex-end; backdrop-filter: blur(4px); }
-        .profile-sheet { width: 100%; max-height: 88vh; background: #f3f4f6; color: #111; border-radius: 28px 28px 0 0; padding: 14px 18px 24px 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; position: relative; animation: slideUpSheet 0.25s ease; }
-        @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .sheet-handle { width: 40px; height: 4px; background: #d1d5db; border-radius: 2px; align-self: center; margin-bottom: 2px; }
-        .profile-hero-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; }
-        .hero-action-btn { width: 44px; height: 44px; background: rgba(0,0,0,0.35); border-radius: 50%; border: none; color: #fff; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .hero-avatar-display { font-size: 85px; text-align: center; margin: -10px 0 4px 0; }
-        
-        .profile-card-main { background: #fff; border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 12px; }
-        .profile-top-row { display: flex; align-items: center; gap: 14px; }
-        .snapcode-box { width: 56px; height: 56px; background: #fffc00; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 28px; border: 2px solid #000; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex-shrink: 0; }
-        .user-names-col h3 { font-size: 18px; font-weight: 700; color: #111; display: flex; align-items: center; gap: 6px; }
-        .user-names-col p { font-size: 13px; color: #6b7280; font-weight: 500; }
-        
-        .badges-row { display: flex; gap: 8px; }
-        .profile-pill-badge { background: #f3f4f6; padding: 5px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; color: #374151; display: flex; align-items: center; gap: 6px; border: 1px solid #e5e7eb; }
-        
-        .email-verify-box { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
-        .email-verify-info { display: flex; align-items: center; gap: 12px; }
-        .email-icon { font-size: 20px; }
-        .email-verify-info h5 { font-size: 14px; font-weight: 700; color: #111; }
-        .email-verify-info p { font-size: 11px; color: #6b7280; }
-        .close-email-btn { background: none; border: none; font-size: 16px; color: #9ca3af; cursor: pointer; }
-
-        .stories-section-header { display: flex; justify-content: space-between; align-items: center; }
-        .stories-section-header h4 { font-size: 16px; font-weight: 700; color: #111; }
-        .private-story-pill { background: #e5e7eb; border: none; padding: 6px 14px; border-radius: 16px; font-size: 12px; font-weight: 600; color: #374151; cursor: pointer; }
-        
-        .stories-tray { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
-        .my-story-tile { width: 110px; height: 165px; background: #111; border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .story-views-pill { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 2px 8px; border-radius: 10px; font-size: 10px; color: #fff; width: fit-content; display: flex; align-items: center; gap: 4px; }
-        .add-snap-tile { width: 110px; height: 165px; background: #fff; border: 2px dashed #cbd5e1; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
-        .add-snap-tile span { font-size: 28px; }
-        .add-snap-tile p { font-size: 12px; font-weight: 600; color: #4b5563; }
-
-        /* Chat Settings Modal */
-        #chat-settings-modal { position: absolute; bottom: 0; left: 0; width: 100%; background: #1c1c1e; border-radius: 24px 24px 0 0; padding: 20px; z-index: 130; display: none; border-top: 1px solid #333; }
-        .chat-setting-option { width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #444; color: #fff; border-radius: 12px; font-size: 13px; font-weight: bold; margin-bottom: 8px; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; }
-        .chat-setting-option.active { border-color: #fffc00; color: #fffc00; background: #333300; }
-
-        /* AR Lenses Modal */
-        #lenses-modal { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: 92%; background: rgba(18,18,18,0.96); border: 1px solid #333; border-radius: 20px; z-index: 95; display: none; padding: 16px; backdrop-filter: blur(12px); }
-        .lenses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; max-height: 220px; overflow-y: auto; }
-        .lens-item { background: #222; border: 1px solid #444; border-radius: 12px; padding: 12px 8px; color: #fff; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .lens-item.active { border-color: #fffc00; background: #2a2a00; color: #fffc00; font-weight: bold; }
-
-        /* Music Search Modal */
-        #music-modal { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: 92%; background: rgba(18,18,18,0.95); border: 1px solid #333; border-radius: 20px; z-index: 95; display: none; padding: 16px; backdrop-filter: blur(12px); max-height: 320px; overflow-y: auto; }
-        .music-search-input { width: 100%; padding: 10px 14px; background: #2a2a2a; border: none; border-radius: 10px; color: #fff; font-size: 13px; outline: none; margin-bottom: 12px; }
-        .song-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #222; border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
-        .song-item:hover { border: 1px solid #fffc00; }
-        .song-info h5 { font-size: 13px; color: #fff; }
-        .song-info p { font-size: 11px; color: #888; }
-        .select-song-btn { background: #fffc00; color: #000; font-size: 11px; font-weight: bold; padding: 5px 10px; border-radius: 6px; border: none; }
-
-        /* Screens */
         .screen { flex: 1; display: flex; flex-direction: column; position: relative; display: none; }
         .screen.active { display: flex; }
 
-        /* Top Bar Layout */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; z-index: 10; }
         .top-left-group { display: flex; align-items: center; gap: 12px; }
-        .profile-avatar { width: 38px; height: 38px; border-radius: 50%; background: #222; border: 2px solid #fffc00; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #000; font-size: 18px; cursor: pointer; overflow: hidden; }
-        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .profile-avatar { width: 38px; height: 38px; border-radius: 50%; background: #222; border: 2px solid #fffc00; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #000; font-size: 18px; cursor: pointer; }
         .icon-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        
-        .badge-icon { position: relative; font-size: 14px; background: rgba(0,0,0,0.4); padding: 5px 10px; border-radius: 20px; display: flex; align-items: center; gap: 4px; border: none; color: #fff; cursor: pointer; }
-        .badge { background: #fffc00; color: #000; font-size: 10px; font-weight: bold; padding: 1px 5px; border-radius: 8px; }
 
-        /* Right Side Vertical Sidebar */
-        .right-sidebar { position: absolute; right: 12px; top: 70px; display: flex; flex-direction: column; gap: 14px; z-index: 10; align-items: center; }
-        .side-icon { background: rgba(0,0,0,0.4); width: 36px; height: 36px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 17px; color: #fff; border: none; cursor: pointer; backdrop-filter: blur(4px); }
-        .side-icon.active-toggle { background: #fffc00; color: #000; }
-
-        /* Camera View & AR Overlays */
         #camera-screen { background: #000; }
         #webcam-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-        
-        #ar-overlay-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .lens-visual-element { font-size: 100px; text-shadow: 0 0 20px rgba(0,0,0,0.8); }
 
-        #active-song-sticker { position: absolute; top: 80px; left: 16px; background: rgba(0,0,0,0.6); border: 1px solid #fffc00; padding: 6px 12px; border-radius: 20px; font-size: 12px; color: #fffc00; z-index: 5; display: none; align-items: center; gap: 6px; backdrop-filter: blur(4px); }
-
-        /* Camera Footer */
         .camera-footer { position: absolute; bottom: 75px; width: 100%; display: flex; justify-content: space-around; align-items: center; padding: 0 35px; z-index: 10; }
-        .memories-btn { width: 44px; height: 44px; border-radius: 12px; border: 2px solid #fff; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; font-size: 20px; cursor: pointer; }
         .shutter-btn { width: 78px; height: 78px; border-radius: 50%; border: 5px solid #fff; background: transparent; cursor: pointer; display: flex; justify-content: center; align-items: center; z-index: 10; }
-        .shutter-inner { width: 62px; height: 62px; border-radius: 50%; background: #fff; transition: transform 0.1s; }
-        .shutter-btn:active .shutter-inner { transform: scale(0.85); }
-        .lens-smiley-btn { width: 46px; height: 46px; border-radius: 50%; background: rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.4); font-size: 24px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .shutter-inner { width: 62px; height: 62px; border-radius: 50%; background: #fff; }
 
-        /* Bottom Navigation Bar */
         .bottom-nav { position: absolute; bottom: 0; width: 100%; height: 60px; background: #000; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #1a1a1a; z-index: 20; }
-        .nav-item { background: none; border: none; color: #777; font-size: 22px; cursor: pointer; display: flex; flex-direction: column; align-items: center; position: relative; padding: 10px; }
+        .nav-item { background: none; border: none; color: #777; font-size: 22px; cursor: pointer; display: flex; flex-direction: column; align-items: center; padding: 10px; }
         .nav-item.active { color: #fffc00; }
-        .nav-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: #00d2ff; border-radius: 50%; }
-        .nav-dot-purple { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: #b000ff; border-radius: 50%; }
-
-        /* Chat Screen (Exact Match with Screenshot 9709.jpg) */
-        #chat-screen { background: #121212; padding: 0; z-index: 15; }
-        .chat-header { background: #181818; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
-        .chat-user-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .chat-partner-avatar { width: 34px; height: 34px; background: #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; color: #fffc00; overflow: hidden; }
-        .chat-partner-name { font-size: 15px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 4px; }
-        
-        .chat-header-actions { display: flex; gap: 16px; align-items: center; }
-        .call-icon-btn { background: none; border: none; color: #fff; font-size: 19px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        
-        #chat-box { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #121212; }
-        .msg { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 14px; word-break: break-word; display: flex; flex-direction: column; gap: 4px; }
-        .msg.incoming { background: #1e1e1e; color: #fff; align-self: flex-start; border: 1px solid #2a2a2a; }
-        .msg.outgoing { background: #fffc00; color: #000; align-self: flex-end; font-weight: 500; }
-        
-        .system-alert-msg { align-self: center; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; text-align: center; margin: 6px 0; }
-        .system-alert-msg.recording { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: #d8b4fe; }
-        
-        /* Exact Snapchat Input Area */
-        .chat-input-area { padding: 10px 14px; background: #181818; display: flex; gap: 12px; align-items: center; border-top: 1px solid #222; }
-        .chat-input-pill { flex: 1; background: #26262a; border-radius: 22px; display: flex; align-items: center; padding: 0 14px; border: 1px solid #333; }
-        .chat-input-pill input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-size: 14px; padding: 10px 0; }
-        .chat-action-icon { background: none; border: none; color: #aaa; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-        #flash-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:#fff; z-index:99; opacity:0; pointer-events:none; transition: opacity 0.2s; }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <div id="flash-overlay"></div>
-
-        <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
-            <p>Snapchat Chat Experience</p>
+            <p>Login & User Search System</p>
             <input type="text" id="name" class="input-box" placeholder="Your Name">
             <input type="text" id="username" class="input-box" placeholder="Username">
             <button class="login-btn" onclick="login()">Enter Jhapki</button>
         </div>
 
-        <!-- Profile Bottom Sheet Modal -->
-        <div id="avatar-studio" onclick="closeAvatarStudio(event)">
-            <div class="profile-sheet" onclick="event.stopPropagation()">
-                <div class="sheet-handle"></div>
-                <div class="profile-hero-header">
-                    <button class="hero-action-btn" onclick="alert('👕 Wardrobe Studio')">👔</button>
-                    <div class="hero-avatar-display" id="sheet-avatar-icon">👩‍🦰✨</div>
-                    <button class="hero-action-btn" onclick="alert('🖼️ Memories')">🖼️</button>
-                </div>
-                <div class="profile-card-main">
-                    <div class="profile-top-row">
-                        <div class="snapcode-box">👻</div>
-                        <div class="user-names-col">
-                            <h3 id="profile-display-name">💖 Niki 🌹</h3>
-                            <p id="profile-display-username">@niku2969</p>
-                        </div>
-                    </div>
-                    <div class="badges-row">
-                        <div class="profile-pill-badge">👻 126,676</div>
-                        <div class="profile-pill-badge">♋ Cancer</div>
-                    </div>
-                </div>
-                <div class="stories-section-header">
-                    <h4>My Stories</h4>
-                    <button class="private-story-pill">+ Private Story</button>
-                </div>
-                <div class="stories-tray">
-                    <div class="my-story-tile" style="background: linear-gradient(135deg, #444, #111);">
-                        <div class="story-views-pill">👁️ 50</div>
-                        <div style="font-size:11px; color:#fff; font-weight:600;">My Story</div>
-                    </div>
-                    <div class="add-snap-tile" onclick="switchTab('camera'); closeAvatarStudio();">
-                        <span>📷</span>
-                        <p>Add Snap</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- AR Lenses Modal -->
-        <div id="lenses-modal">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎭 Snapchat AR Lenses</span>
-                <span style="font-size:12px; color:#aaa; cursor:pointer;" onclick="toggleLenses()">✕ Close</span>
-            </div>
-            <div class="lenses-grid">
-                <div class="lens-item active" onclick="selectLens('none', 'Normal', this)"><span>📷</span>Normal</div>
-                <div class="lens-item" onclick="selectLens('dog', '🐶 Puppy', this)"><span>🐶</span>Golden Dog</div>
-                <div class="lens-item" onclick="selectLens('crown', '👑 Princess', this)"><span>👑</span>Flower Crown</div>
-                <div class="lens-item" onclick="selectLens('hearts', '💖 Heart Eyes', this)"><span>💖</span>Heart Eyes</div>
-                <div class="lens-item" onclick="selectLens('baby', '👶 Soft Glow', this)"><span>👶</span>Baby Face</div>
-                <div class="lens-item" onclick="selectLens('fire', '🔥 Neon Cyber', this)"><span>🔥</span>Cyber Neon</div>
-            </div>
-        </div>
-
-        <!-- Music Search Modal -->
-        <div id="music-modal">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-                <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎵 Search Song for Story</span>
-                <span style="font-size:12px; color:#aaa; cursor:pointer;" onclick="toggleMusicModal()">✕ Close</span>
-            </div>
-            <input type="text" id="song-search-input" class="music-search-input" placeholder="Search track..." oninput="filterSongs()">
-            <div id="song-list-container">
-                <div class="song-item" onclick="selectSong('Main Barish Ban Jaun - Jubin')"><div class="song-info"><h5>Main Barish Ban Jaun</h5><p>Jubin Nautiyal</p></div><button class="select-song-btn">Select</button></div>
-                <div class="song-item" onclick="selectSong('Hamnawa Mere - Jubin')"><div class="song-info"><h5>Hamnawa Mere</h5><p>Jubin Nautiyal</p></div><button class="select-song-btn">Select</button></div>
-            </div>
-        </div>
-
-        <!-- 1. MAP SCREEN -->
-        <div id="map-screen" class="screen">
-            <div class="top-bar" style="background:#0f172a;">
-                <div class="top-left-group">
-                    <div class="profile-avatar" onclick="openAvatarStudio()"><span>👧</span></div>
-                </div>
-                <h3>Snap Map</h3>
-                <button class="icon-btn" onclick="fetchLiveLocation()">📍</button>
-            </div>
-            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#1e293b; color:#fff; gap:14px; padding: 20px; text-align: center;">
-                <span style="font-size:50px;">🌍</span>
-                <h4>Live Location Sharing Active</h4>
-                <p id="location-coords-text" style="font-size: 13px; color: #94a3b8;">Fetching precise coordinates...</p>
-            </div>
-        </div>
-
-        <!-- 2. CHAT SCREEN (Exact Screenshot 9709.jpg Match) -->
-        <div id="chat-screen" class="screen">
-            <div class="chat-header">
-                <div class="chat-user-info" onclick="alert('Profile info')">
-                    <div class="chat-partner-avatar">🧔</div>
-                    <div class="chat-partner-name">Faisu 😍 <span style="font-size:12px; color:#aaa;">›</span></div>
-                </div>
-                <div class="chat-header-actions">
-                    <button class="call-icon-btn" onclick="startAudioCall()" title="Audio Call">📞</button>
-                    <button class="call-icon-btn" onclick="startVideoCall()" title="Video Call">📹</button>
-                    <button class="call-icon-btn" onclick="alert('Options')">›</button>
-                </div>
-            </div>
-            
-            <div id="chat-box">
-                <div class="msg incoming">
-                    <span style="font-size:10px; color:#ff8000; font-weight:bold;">FAISU 😍</span>
-                    <span>Bilkul banna hai hai</span>
-                </div>
-                <div class="msg outgoing">
-                    <span style="font-size:10px; color:#666; font-weight:bold;">ME 1:02 PM</span>
-                    <span>Papa bol rhe the bs do Saal time h</span>
-                </div>
-                <div class="msg incoming">
-                    <span style="font-size:10px; color:#ff8000; font-weight:bold;">FAISU 😍</span>
-                    <span>Amma dekh rahi hume haste huye<br>Pooch rahi aisa kya dekh rahe ho</span>
-                </div>
-            </div>
-
-            <!-- Exact Chat Input Bar -->
-            <div class="chat-input-area">
-                <button class="chat-action-icon" onclick="document.getElementById('gallery-input').click()" title="Camera">📷</button>
-                <div class="chat-input-pill">
-                    <input type="text" id="message" placeholder="Send a Chat" onkeypress="handleKey(event)">
-                </div>
-                <button class="chat-action-icon" onclick="alert('Voice note')" title="Microphone">🎤</button>
-                <button class="chat-action-icon" onclick="openAvatarStudio()" title="Bitmoji">👤</button>
-                <button class="chat-action-icon" onclick="alert('Gallery')" title="Memories">🖼️</button>
-                <button class="chat-action-icon" onclick="alert('Minis & Rockets')" title="Rockets">🚀</button>
-            </div>
-        </div>
-
-        <!-- 3. CAMERA SCREEN -->
         <div id="camera-screen" class="screen active">
             <video id="webcam-video" autoplay playsinline></video>
-            
-            <div id="ar-overlay-layer">
-                <div class="lens-visual-element" id="lens-icon-display" style="display: none;">🐶</div>
-            </div>
-
-            <div id="active-song-sticker">🎵 <span id="current-song-label">Select a song...</span></div>
-
             <div class="top-bar">
                 <div class="top-left-group">
-                    <div class="profile-avatar" onclick="openAvatarStudio()" title="Profiles"><span>👧</span></div>
+                    <div class="profile-avatar">👦</div>
                     <button class="icon-btn" onclick="openSearch()">🔍</button>
                 </div>
-                <div class="top-right-group">
-                    <button class="badge-icon" onclick="alert('68 Requests')">👤+ <span class="badge">68</span></button>
-                </div>
             </div>
-
-            <div class="right-sidebar">
-                <button class="side-icon" id="flip-btn" onclick="flipCamera()" title="Flip">🔄</button>
-                <button class="side-icon" id="flash-btn" onclick="toggleFlash()" title="Flash">⚡</button>
-                <button class="side-icon" id="night-btn" onclick="toggleNightMode()" title="Night">🌙</button>
-                <button class="side-icon" onclick="alert('Director mode')">🎞️</button>
-                <button class="side-icon" onclick="toggleMusicModal()" title="Add Music">🎵</button>
-                <button class="side-icon" onclick="alert('Multi-Snap')">📑</button>
-            </div>
-
             <div class="camera-footer">
-                <input type="file" id="gallery-input" style="display:none" accept="image/*" onchange="previewGallery(event)">
-                <div class="memories-btn" onclick="document.getElementById('gallery-input').click()" title="Memories">🖼️</div>
-                <button class="shutter-btn" onclick="captureSnap()"><div class="shutter-inner"></div></button>
-                <button class="lens-smiley-btn" onclick="toggleLenses()" title="AR Lenses">😃</button>
+                <button class="shutter-btn"><div class="shutter-inner"></div></button>
             </div>
         </div>
 
-        <!-- 4. STORIES SCREEN -->
-        <div id="stories-screen" class="screen">
-            <div class="top-bar" style="background:#181818;">
-                <h3>Stories & Public Feed</h3>
-                <button class="icon-btn" onclick="alert('Settings')">⚙️</button>
-            </div>
-            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#111; color:#aaa; gap:10px;">
-                <span style="font-size:40px;">🌐</span>
-                <p>Public Stories & Creator DP feed active.</p>
-            </div>
-        </div>
-
-        <!-- 5. SPOTLIGHT SCREEN -->
-        <div id="spotlight-screen" class="screen">
-            <div class="top-bar" style="background:#181818;">
-                <h3>Spotlight</h3>
-                <button class="icon-btn" onclick="alert('Trending')">🔥</button>
-            </div>
-            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#111; color:#aaa; gap:10px;">
-                <span style="font-size:40px;">▶️</span>
-                <p>Trending entertainment clips.</p>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation Bar -->
         <div class="bottom-nav">
-            <button class="nav-item" onclick="switchTab('map', this)">📍</button>
-            <button class="nav-item" onclick="switchTab('chat', this)">
-                💬
-                <span class="nav-dot"></span>
-            </button>
-            <button class="nav-item active" onclick="switchTab('camera', this)">
-                📷
-            </button>
-            <button class="nav-item" onclick="switchTab('stories', this)">
-                👥
-                <span class="nav-dot-purple"></span>
-            </button>
-            <button class="nav-item" onclick="switchTab('spotlight', this)">▶️</button>
+            <button class="nav-item active">📷</button>
         </div>
     </div>
 
@@ -371,14 +72,12 @@
     <script>
         const socket = io();
         let currentUser = null;
-        let useFrontCamera = true;
-        let mediaStream = null;
 
         async function login() {
             const name = document.getElementById('name').value.trim();
             const username = document.getElementById('username').value.trim();
             if (!name || !username) {
-                alert('Please enter name and username');
+                alert('Enter name and username');
                 return;
             }
             const res = await fetch('/api/auth/login', {
@@ -390,153 +89,29 @@
             if (data.success) {
                 currentUser = data.user;
                 document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('profile-display-name').innerText = `💖 ${currentUser.name} 🌹`;
-                document.getElementById('profile-display-username').innerText = `@${currentUser.username}`;
-                startCamera();
-            } else {
-                alert(data.message);
+                alert('Login successful! Now you can search users.');
             }
         }
 
-        function openAvatarStudio() { document.getElementById('avatar-studio').style.display = 'flex'; }
-        function closeAvatarStudio(e) { document.getElementById('avatar-studio').style.display = 'none'; }
-
-        function startAudioCall() {
-            alert("📞 Audio Call Connected with Faisu 😍");
-        }
-
-        function startVideoCall() {
-            alert("📹 Video Call Connected with Faisu 😍");
-        }
-
-        function toggleLenses() {
-            const modal = document.getElementById('lenses-modal');
-            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function selectLens(type, lensName, btn) {
-            document.querySelectorAll('.lens-item').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            const iconDisplay = document.getElementById('lens-icon-display');
-            const video = document.getElementById('webcam-video');
-
-            if (type === 'none') {
-                iconDisplay.style.display = 'none';
-                video.style.filter = 'none';
-            } else if (type === 'dog') {
-                iconDisplay.innerText = '🐶🐾';
-                iconDisplay.style.display = 'block';
-                video.style.filter = 'contrast(1.15) saturate(1.2)';
-            } else if (type === 'crown') {
-                iconDisplay.innerText = '👑🌸';
-                iconDisplay.style.display = 'block';
-                video.style.filter = 'brightness(1.1) drop-shadow(0 0 10px pink)';
-            } else if (type === 'hearts') {
-                iconDisplay.innerText = '💖✨';
-                iconDisplay.style.display = 'block';
-                video.style.filter = 'hue-rotate(15deg) contrast(1.1)';
-            } else if (type === 'baby') {
-                iconDisplay.innerText = '👶✨';
-                iconDisplay.style.display = 'block';
-                video.style.filter = 'blur(0.2px) brightness(1.25) contrast(0.95)';
-            } else if (type === 'fire') {
-                iconDisplay.innerText = '🔥⚡';
-                iconDisplay.style.display = 'block';
-                video.style.filter = 'sepia(0.4) contrast(1.3) brightness(1.1)';
-            }
-            toggleLenses();
-        }
-
-        function toggleMusicModal() {
-            const modal = document.getElementById('music-modal');
-            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function selectSong(songName) {
-            document.getElementById('current-song-label').innerText = songName;
-            document.getElementById('active-song-sticker').style.display = 'flex';
-            toggleMusicModal();
-        }
-
-        async function startCamera() {
+        async function openSearch() {
+            let query = prompt("Search username or name:");
+            if (!query) return;
             try {
-                if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
-                mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: useFrontCamera ? 'user' : 'environment' }, audio: false });
-                document.getElementById('webcam-video').srcObject = mediaStream;
-            } catch (err) { console.log("Camera error:", err); }
+                const res = await fetch(`/api/users/search?q=${encodeURIComponent(query)}`);
+                const data = await res.json();
+                if (data.success && data.users.length > 0) {
+                    let resultText = "Found Users:\n";
+                    data.users.forEach(u => {
+                        resultText += `• ${u.name} (@${u.username})\n`;
+                    });
+                    alert(resultText);
+                } else {
+                    alert("No user found with this username!");
+                }
+            } catch (err) {
+                alert("Search failed. Check connection.");
+            }
         }
-
-        function flipCamera() {
-            useFrontCamera = !useFrontCamera;
-            startCamera();
-            document.getElementById('flip-btn').classList.toggle('active-toggle');
-        }
-
-        let flashOn = false;
-        function toggleFlash() {
-            flashOn = !flashOn;
-            document.getElementById('flash-btn').classList.toggle('active-toggle', flashOn);
-        }
-
-        let nightMode = false;
-        function toggleNightMode() {
-            nightMode = !nightMode;
-            document.getElementById('night-btn').classList.toggle('active-toggle', nightMode);
-            document.getElementById('webcam-video').style.filter = nightMode ? 'brightness(1.8) contrast(1.2)' : 'none';
-        }
-
-        function captureSnap() {
-            const flash = document.getElementById('flash-overlay');
-            flash.style.opacity = '1';
-            setTimeout(() => { flash.style.opacity = '0'; }, 200);
-            alert("📸 Snap Captured Successfully!");
-        }
-
-        function previewGallery(event) {
-            if (event.target.files[0]) alert("🖼️ Memories gallery opened.");
-        }
-
-        function openSearch() {
-            let query = prompt("Search friends or stories:");
-            if (query) alert("Searching: " + query);
-        }
-
-        function switchTab(tabName, el) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            if (tabName === 'map') document.getElementById('map-screen').classList.add('active');
-            else if (tabName === 'chat') document.getElementById('chat-screen').classList.add('active');
-            else if (tabName === 'camera') document.getElementById('camera-screen').classList.add('active');
-            else if (tabName === 'stories') document.getElementById('stories-screen').classList.add('active');
-            else if (tabName === 'spotlight') document.getElementById('spotlight-screen').classList.add('active');
-            
-            if (el) el.classList.add('active');
-        }
-
-        function sendMessage() {
-            const msgInput = document.getElementById('message');
-            const msg = msgInput.value.trim();
-            if (!msg) return;
-            socket.emit('send_snap', { sender: currentUser.name, message: msg });
-            msgInput.value = '';
-        }
-
-        function handleKey(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        socket.on('receive_snap', (data) => {
-            const box = document.getElementById('chat-box');
-            const isSelf = currentUser && data.sender === currentUser.name;
-            const msgElement = document.createElement('div');
-            msgElement.className = `msg ${isSelf ? 'outgoing' : 'incoming'}`;
-            msgElement.innerHTML = `
-                <span style="font-size:10px; font-weight:bold;">${data.sender}</span>
-                <span>${data.message}</span>`;
-            box.appendChild(msgElement);
-            box.scrollTop = box.scrollHeight;
-        });
     </script>
 </body>
 </html>
