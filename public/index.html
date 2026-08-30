@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jhapki - Dual Profile System</title>
+    <title>Jhapki - Music & Live Map</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
@@ -18,24 +18,30 @@
         .input-box { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 15px; outline: none; margin-bottom: 14px; }
         .login-btn { width: 100%; padding: 14px; background: #fffc00; color: #000; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; }
 
+        /* Music Search Modal */
+        #music-modal { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: 92%; background: rgba(18,18,18,0.95); border: 1px solid #333; border-radius: 20px; z-index: 95; display: none; padding: 16px; backdrop-filter: blur(12px); max-height: 350px; overflow-y: auto; }
+        .music-search-input { width: 100%; padding: 10px 14px; background: #2a2a2a; border: none; border-radius: 10px; color: #fff; font-size: 13px; outline: none; margin-bottom: 12px; }
+        .song-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #222; border-radius: 10px; margin-bottom: 8px; cursor: pointer; border: 1px solid transparent; }
+        .song-item:hover { border-color: #fffc00; }
+        .song-info h5 { font-size: 13px; color: #fff; }
+        .song-info p { font-size: 11px; color: #888; }
+        .select-song-btn { background: #fffc00; color: #000; font-size: 11px; font-weight: bold; padding: 5px 10px; border-radius: 6px; border: none; }
+
         /* Dual Profile Studio Modal */
         #avatar-studio { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 110; display: none; flex-direction: column; padding: 16px; overflow-y: auto; }
         .studio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .studio-header h3 { color: #fffc00; font-size: 18px; }
         .close-studio { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; }
         
-        /* Profile Mode Switcher */
         .profile-mode-switcher { display: flex; background: #1a1a1a; padding: 4px; border-radius: 12px; margin-bottom: 14px; border: 1px solid #333; }
         .mode-btn { flex: 1; padding: 10px; background: transparent; border: none; color: #aaa; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 10px; text-align: center; }
         .mode-btn.active { background: #fffc00; color: #000; }
 
-        /* Preview Area */
         .profile-preview-card { width: 100%; height: 150px; background: linear-gradient(135deg, #2b1055, #7597de); border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; margin-bottom: 14px; border: 2px solid #fffc00; box-shadow: 0 10px 25px rgba(255,252,0,0.2); overflow: hidden; }
         .profile-dp-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fffc00; display: none; }
         .avatar-display-large { font-size: 60px; }
         .profile-tagline { font-size: 12px; color: #fffc00; font-weight: bold; margin-top: 6px; background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 12px; }
 
-        /* Sections */
         .profile-section { display: none; }
         .profile-section.active-section { display: block; }
         .customizer-section { margin-bottom: 14px; }
@@ -70,7 +76,9 @@
         /* Camera View & Shutter */
         #camera-screen { background: #000; }
         #webcam-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
-        #ar-overlay-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; display: flex; justify-content: center; align-items: center; font-size: 90px; opacity: 0; transition: all 0.2s; }
+        
+        /* Active Song Story Sticker on Camera */
+        #active-song-sticker { position: absolute; top: 80px; left: 16px; background: rgba(0,0,0,0.6); border: 1px solid #fffc00; padding: 6px 12px; border-radius: 20px; font-size: 12px; color: #fffc00; z-index: 5; display: none; align-items: center; gap: 6px; backdrop-filter: blur(4px); }
 
         .camera-footer { position: absolute; bottom: 70px; width: 100%; display: flex; justify-content: space-around; align-items: center; padding: 0 30px; z-index: 10; }
         .gallery-preview { width: 42px; height: 42px; border-radius: 10px; border: 2px solid #fff; background: #333; overflow: hidden; display: flex; justify-content: center; align-items: center; font-size: 16px; cursor: pointer; }
@@ -114,10 +122,37 @@
         <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
-            <p>Dual Profile: Local Bitmoji & Public Creator DP</p>
+            <p>Music Search Stories & Live Snap Map</p>
             <input type="text" id="name" class="input-box" placeholder="Your Name">
             <input type="text" id="username" class="input-box" placeholder="Username">
             <button class="login-btn" onclick="login()">Enter Jhapki</button>
+        </div>
+
+        <!-- Music Search Modal -->
+        <div id="music-modal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎵 Search Song for Story</span>
+                <span style="font-size:12px; color:#aaa; cursor:pointer;" onclick="toggleMusicModal()">✕ Close</span>
+            </div>
+            <input type="text" id="song-search-input" class="music-search-input" placeholder="Search track (e.g. Main Barish, Hamnawa)..." oninput="filterSongs()">
+            <div id="song-list-container">
+                <div class="song-item" onclick="selectSong('Main Barish Ban Jaun - Jubin Nautiyal')">
+                    <div class="song-info"><h5>Main Barish Ban Jaun</h5><p>Jubin Nautiyal • 2.4M Snaps</p></div>
+                    <button class="select-song-btn">Select</button>
+                </div>
+                <div class="song-item" onclick="selectSong('Hamnawa - Jubin Nautiyal')">
+                    <div class="song-info"><h5>Hamnawa Mere</h5><p>Jubin Nautiyal • 1.8M Snaps</p></div>
+                    <button class="select-song-btn">Select</button>
+                </div>
+                <div class="song-item" onclick="selectSong('Pehle Bhi Main - Animal')">
+                    <div class="song-info"><h5>Pehle Bhi Main</h5><p>Vishal Mishra • 4.1M Snaps</p></div>
+                    <button class="select-song-btn">Select</button>
+                </div>
+                <div class="song-item" onclick="selectSong('Raataan Lambiyan - Jubin Nautiyal')">
+                    <div class="song-info"><h5>Raataan Lambiyan</h5><p>Tanishk Bagchi • 3.2M Snaps</p></div>
+                    <button class="select-song-btn">Select</button>
+                </div>
+            </div>
         </div>
 
         <!-- Dual Profile Studio Modal -->
@@ -127,20 +162,17 @@
                 <button class="close-studio" onclick="closeAvatarStudio()">✕ Close</button>
             </div>
             
-            <!-- Switcher: Local Bitmoji vs Public Profile -->
             <div class="profile-mode-switcher">
                 <button class="mode-btn active" id="btn-mode-local" onclick="switchProfileMode('local')">👻 Local Bitmoji</button>
                 <button class="mode-btn" id="btn-mode-public" onclick="switchProfileMode('public')">🌐 Public Profile</button>
             </div>
 
-            <!-- Preview Area -->
             <div class="profile-preview-card" id="profile-preview-bg">
                 <img id="public-dp-preview" class="profile-dp-img" src="" alt="Public DP">
                 <div class="avatar-display-large" id="avatar-display-icon">👦</div>
                 <div class="profile-tagline" id="profile-summary-tag">Local Chat & Snap Map</div>
             </div>
 
-            <!-- 1. LOCAL BITMOJI PROFILE SECTION -->
             <div id="section-local-profile" class="profile-section active-section">
                 <div class="customizer-section">
                     <label>Select Bitmoji Gender & Style</label>
@@ -161,15 +193,13 @@
                 </div>
             </div>
 
-            <!-- 2. PUBLIC CREATOR PROFILE SECTION -->
             <div id="section-public-profile" class="profile-section">
                 <div class="customizer-section">
                     <label>Upload Real Creator Photo (DP)</label>
                     <input type="file" id="public-photo-input" accept="image/*" class="input-box" onchange="uploadPublicPhoto(event)">
                 </div>
                 <div class="customizer-section">
-                    <label>Public Story & Subscriber Settings</label>
-                    <p style="font-size:12px; color:#aaa; margin-bottom:10px;">Your public profile showcases your real photo DP, public stories, and subscriber highlights across Jhapki Spotlight & Map.</p>
+                    <label>Public Story Feed</label>
                     <button class="option-btn selected" style="width:100%; padding:12px;" onclick="alert('🌐 Public Profile & Story published to feed!')">Publish Public Story</button>
                 </div>
             </div>
@@ -177,7 +207,7 @@
             <button class="save-avatar-btn" onclick="saveProfiles()">Save Profile Changes</button>
         </div>
 
-        <!-- 1. MAP SCREEN -->
+        <!-- 1. MAP SCREEN WITH LIVE LOCATION -->
         <div id="map-screen" class="screen">
             <div class="top-bar" style="background:#0f172a;">
                 <div class="profile-avatar" id="map-avatar" onclick="openAvatarStudio()">
@@ -185,11 +215,13 @@
                     <span id="map-avatar-txt">👦</span>
                 </div>
                 <h3>Snap Map</h3>
-                <button class="icon-btn" onclick="alert('Map Settings')">⚙️</button>
+                <button class="icon-btn" onclick="fetchLiveLocation()">📍</button>
             </div>
-            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#1e293b; color:#94a3b8; gap:10px;">
-                <span style="font-size:40px;">📍</span>
-                <p>Local Bitmoji sharing is active with friends.</p>
+            <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#1e293b; color:#fff; gap:14px; padding: 20px; text-align: center;">
+                <span style="font-size:50px;">🌍</span>
+                <h4 id="location-status-title">Live Location Sharing Active</h4>
+                <p id="location-coords-text" style="font-size: 13px; color: #94a3b8;">Fetching precise coordinates...</p>
+                <button class="login-btn" style="max-width: 220px; padding: 10px; font-size: 13px;" onclick="fetchLiveLocation()">Refresh My Location</button>
             </div>
         </div>
 
@@ -202,7 +234,7 @@
                         <span id="chat-avatar-txt">👦</span>
                     </div>
                     <div>
-                        <h4 style="font-size: 15px;">Jhapki Community 🔥 20</h4>
+                        <h4 style="font-size: 15px;">Jhapki Community 🔥 25</h4>
                         <span style="font-size: 11px; color: #22c55e;">Active Streak</span>
                     </div>
                 </div>
@@ -215,10 +247,13 @@
             </div>
         </div>
 
-        <!-- 3. CAMERA SCREEN -->
+        <!-- 3. CAMERA SCREEN WITH MUSIC STICKER -->
         <div id="camera-screen" class="screen active">
             <video id="webcam-video" autoplay playsinline></video>
             
+            <!-- Music Sticker on Camera Preview -->
+            <div id="active-song-sticker">🎵 <span id="current-song-label">Select a song...</span></div>
+
             <div class="top-bar">
                 <div class="top-left-icons">
                     <div class="profile-avatar" id="cam-profile-avatar" onclick="openAvatarStudio()" title="Profiles">
@@ -236,6 +271,7 @@
                 <button class="side-icon" id="flip-btn" onclick="flipCamera()" title="Flip">🔄</button>
                 <button class="side-icon" id="flash-btn" onclick="toggleFlash()" title="Flash">⚡</button>
                 <button class="side-icon" id="night-btn" onclick="toggleNightMode()" title="Night">🌙</button>
+                <button class="side-icon" onclick="toggleMusicModal()" title="Add Music">🎵</button>
             </div>
 
             <div class="camera-footer">
@@ -295,9 +331,10 @@
         let useFrontCamera = true;
         let mediaStream = null;
 
-        // Profile State
-        let activeProfileMode = 'local'; // 'local' (Bitmoji) or 'public' (Real DP Photo)
+        let activeProfileMode = 'local';
         let publicDpUrl = null;
+        let selectedSong = null;
+
         let bitmoji = {
             gender: 'boy',
             genderText: 'Party Boy',
@@ -323,9 +360,54 @@
                 document.getElementById('login-screen').style.display = 'none';
                 updateGlobalDisplay();
                 startCamera();
+                fetchLiveLocation(); // Initialize location on login
             } else {
                 alert(data.message);
             }
+        }
+
+        // Live Location System using Geolocation API
+        function fetchLiveLocation() {
+            const statusText = document.getElementById('location-coords-text');
+            if (navigator.geolocation) {
+                statusText.innerText = "Locating your precise coordinates...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(4);
+                        const lng = position.coords.longitude.toFixed(4);
+                        statusText.innerText = `📍 Latitude: ${lat}, Longitude: ${lng} (India)`;
+                    },
+                    (error) => {
+                        statusText.innerText = "⚠️ Location permission denied or unavailable. Default: Ahmedabad, India";
+                    },
+                    { timeout: 10000 }
+                );
+            } else {
+                statusText.innerText = "Geolocation is not supported by your browser.";
+            }
+        }
+
+        // Music / Song Search Feature
+        function toggleMusicModal() {
+            const modal = document.getElementById('music-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function filterSongs() {
+            const query = document.getElementById('song-search-input').value.toLowerCase();
+            const items = document.querySelectorAll('.song-item');
+            items.forEach(item => {
+                const text = item.innerText.toLowerCase();
+                item.style.display = text.includes(query) ? 'flex' : 'none';
+            });
+        }
+
+        function selectSong(songName) {
+            selectedSong = songName;
+            document.getElementById('current-song-label').innerText = songName;
+            document.getElementById('active-song-sticker').style.display = 'flex';
+            toggleMusicModal();
+            alert(`🎵 Song attached to story: ${songName}`);
         }
 
         function openAvatarStudio() {
@@ -461,7 +543,8 @@
             const flash = document.getElementById('flash-overlay');
             flash.style.opacity = '1';
             setTimeout(() => { flash.style.opacity = '0'; }, 200);
-            alert("📸 Snap Captured Successfully!");
+            const songMsg = selectedSong ? ` with music [🎵 ${selectedSong}]` : '';
+            alert(`📸 Snap Captured Successfully${songMsg}!`);
         }
 
         function previewGallery(event) {
@@ -478,7 +561,10 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-            if (tabName === 'map') document.getElementById('map-screen').classList.add('active');
+            if (tabName === 'map') {
+                document.getElementById('map-screen').classList.add('active');
+                fetchLiveLocation();
+            }
             else if (tabName === 'chat') document.getElementById('chat-screen').classList.add('active');
             else if (tabName === 'camera') document.getElementById('camera-screen').classList.add('active');
             else if (tabName === 'stories') document.getElementById('stories-screen').classList.add('active');
