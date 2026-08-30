@@ -114,12 +114,22 @@
         .chat-user-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .chat-avatar { width: 34px; height: 34px; background: #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; color: #fffc00; overflow: hidden; }
         .chat-avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        
+        .chat-header-actions { display: flex; gap: 10px; align-items: center; }
+        .security-action-btn { background: #222; border: 1px solid #444; color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .security-action-btn:active { background: #fffc00; color: #000; }
+
         .call-btn-in-chat { background: #22c55e; color: #fff; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(34,197,94,0.4); }
         
         #chat-box { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 14px; word-break: break-word; display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
         .msg.incoming { background: #222; align-self: flex-start; }
         .msg.outgoing { background: #fffc00; color: #000; align-self: flex-end; font-weight: 500; }
+        
+        /* System Notification Bubble in Chat */
+        .system-alert-msg { align-self: center; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; text-align: center; margin: 6px 0; }
+        .system-alert-msg.recording { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: #d8b4fe; }
+
         .msg-timer { font-size: 10px; opacity: 0.7; margin-top: 4px; display: block; }
         
         .chat-input-area { padding: 12px 16px; background: #181818; display: flex; gap: 10px; align-items: center; border-top: 1px solid #222; }
@@ -134,14 +144,16 @@
     <div class="app-container">
         <div id="flash-overlay"></div>
 
+        <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
-            <p>Snapchat Experience with Auto-Delete Chat</p>
+            <p>Screenshot & Screen Recording Alerts in Chat</p>
             <input type="text" id="name" class="input-box" placeholder="Your Name">
             <input type="text" id="username" class="input-box" placeholder="Username">
             <button class="login-btn" onclick="login()">Enter Jhapki</button>
         </div>
 
+        <!-- Chat Settings Modal -->
         <div id="chat-settings-modal">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
                 <h4 style="color:#fffc00; font-size:16px;">⏱️ Delete Chats</h4>
@@ -149,7 +161,7 @@
             </div>
             <button class="chat-setting-option active" id="mode-viewing" onclick="setChatDeleteMode('viewing')">
                 <span>👁️ Delete After Viewing</span>
-                <span style="font-size:11px; opacity:0.7;">Default Snapchat</span>
+                <span style="font-size:11px; opacity:0.7;">Default</span>
             </button>
             <button class="chat-setting-option" id="mode-24hrs" onclick="setChatDeleteMode('24hrs')">
                 <span>⏳ Delete After 24 Hours</span>
@@ -161,6 +173,7 @@
             </button>
         </div>
 
+        <!-- AR Lenses Modal -->
         <div id="lenses-modal">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎭 Snapchat AR Lenses</span>
@@ -176,6 +189,7 @@
             </div>
         </div>
 
+        <!-- Music Search Modal -->
         <div id="music-modal">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎵 Search Song for Story</span>
@@ -189,6 +203,7 @@
             </div>
         </div>
 
+        <!-- Dual Profile Studio Modal -->
         <div id="avatar-studio">
             <div class="studio-header">
                 <h3>👥 Jhapki Profiles</h3>
@@ -240,6 +255,7 @@
             <button class="save-avatar-btn" onclick="saveProfiles()">Save Profile Changes</button>
         </div>
 
+        <!-- 1. MAP SCREEN -->
         <div id="map-screen" class="screen">
             <div class="top-bar" style="background:#0f172a;">
                 <div class="profile-avatar" id="map-avatar" onclick="openAvatarStudio()">
@@ -257,19 +273,24 @@
             </div>
         </div>
 
+        <!-- 2. CHAT SCREEN WITH SECURITY BUTTONS -->
         <div id="chat-screen" class="screen">
             <div class="chat-header">
-                <div class="chat-user-info" onclick="toggleChatSettings()" title="Tap to change chat deletion settings">
+                <div class="chat-user-info" onclick="toggleChatSettings()">
                     <div class="chat-avatar" id="chat-avatar-box">
                         <img id="chat-avatar-img" src="">
                         <span id="chat-avatar-txt">👦</span>
                     </div>
                     <div>
-                        <h4 style="font-size: 15px;">Jhapki Community 🔥 35</h4>
+                        <h4 style="font-size: 15px;">Jhapki Community 🔥 40</h4>
                         <span id="chat-delete-status-label" style="font-size: 11px; color: #fffc00;">Delete after viewing 👁️</span>
                     </div>
                 </div>
-                <button class="call-btn-in-chat" onclick="startVoiceCall()">📞</button>
+                <div class="chat-header-actions">
+                    <button class="security-action-btn" onclick="triggerScreenshot()" title="Simulate Screenshot">📸 Snap</button>
+                    <button class="security-action-btn" onclick="triggerRecording()" title="Simulate Screen Recording">🔴 Rec</button>
+                    <button class="call-btn-in-chat" onclick="startVoiceCall()">📞</button>
+                </div>
             </div>
             <div id="chat-box"></div>
             <div class="chat-input-area">
@@ -278,6 +299,7 @@
             </div>
         </div>
 
+        <!-- 3. CAMERA SCREEN -->
         <div id="camera-screen" class="screen active">
             <video id="webcam-video" autoplay playsinline></video>
             
@@ -315,6 +337,7 @@
             </div>
         </div>
 
+        <!-- 4. STORIES SCREEN -->
         <div id="stories-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
                 <h3>Stories & Public Feed</h3>
@@ -326,6 +349,7 @@
             </div>
         </div>
 
+        <!-- 5. SPOTLIGHT SCREEN -->
         <div id="spotlight-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
                 <h3>Spotlight</h3>
@@ -337,6 +361,7 @@
             </div>
         </div>
 
+        <!-- Bottom Navigation Bar -->
         <div class="bottom-nav">
             <button class="nav-item" onclick="switchTab('map', this)">📍</button>
             <button class="nav-item" onclick="switchTab('chat', this)">
@@ -365,7 +390,7 @@
         let publicDpUrl = null;
         let selectedSong = null;
         let currentActiveLens = 'Normal';
-        let chatDeleteMode = 'viewing'; // 'viewing', '24hrs', '7days'
+        let chatDeleteMode = 'viewing';
 
         let bitmoji = {
             gender: 'boy',
@@ -397,6 +422,40 @@
                 alert(data.message);
             }
         }
+
+        // Screenshot & Screen Recording triggers & listeners
+        function triggerScreenshot() {
+            if (!currentUser) return;
+            socket.emit('security_alert', { sender: currentUser.name, type: 'screenshot' });
+        }
+
+        function triggerRecording() {
+            if (!currentUser) return;
+            socket.emit('security_alert', { sender: currentUser.name, type: 'recording' });
+        }
+
+        // Auto-detect PrintScreen key on desktop keyboards
+        window.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen' && currentUser) {
+                socket.emit('security_alert', { sender: currentUser.name, type: 'screenshot' });
+            }
+        });
+
+        socket.on('receive_security_alert', (data) => {
+            const box = document.getElementById('chat-box');
+            const alertDiv = document.createElement('div');
+            
+            if (data.type === 'screenshot') {
+                alertDiv.className = 'system-alert-msg';
+                alertDiv.innerHTML = `📸 ${data.sender} took a screenshot of the chat!`;
+            } else {
+                alertDiv.className = 'system-alert-msg recording';
+                alertDiv.innerHTML = `🔴 ${data.sender} started screen recording!`;
+            }
+            
+            box.appendChild(alertDiv);
+            box.scrollTop = box.scrollHeight;
+        });
 
         // Chat Delete Settings
         function toggleChatSettings() {
@@ -696,7 +755,6 @@
                     <span class="msg-timer">${data.timer || '👁️ Delete after viewing'}</span>
                 </div>`;
 
-            // If "Delete after viewing", allow tap to open/disappear
             if (chatDeleteMode === 'viewing') {
                 msgElement.onclick = function() {
                     if (confirm("👁️ Open and view snap? It will disappear after viewing!")) {
