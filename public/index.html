@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jhapki - Original Snapchat Lenses</title>
+    <title>Jhapki - Snapchat Experience</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
@@ -18,7 +18,13 @@
         .input-box { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 15px; outline: none; margin-bottom: 14px; }
         .login-btn { width: 100%; padding: 14px; background: #fffc00; color: #000; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; }
 
-        /* AR Lenses Selection Menu */
+        /* Chat Settings Modal */
+        #chat-settings-modal { position: absolute; bottom: 0; left: 0; width: 100%; background: #1c1c1e; border-radius: 24px 24px 0 0; padding: 20px; z-index: 130; display: none; border-top: 1px solid #333; animation: slideUp 0.2s ease; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .chat-setting-option { width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #444; color: #fff; border-radius: 12px; font-size: 13px; font-weight: bold; margin-bottom: 8px; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        .chat-setting-option.active { border-color: #fffc00; color: #fffc00; background: #333300; }
+
+        /* AR Lenses Modal */
         #lenses-modal { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: 92%; background: rgba(18,18,18,0.96); border: 1px solid #333; border-radius: 20px; z-index: 95; display: none; padding: 16px; backdrop-filter: blur(12px); }
         .lenses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; max-height: 220px; overflow-y: auto; }
         .lens-item { background: #222; border: 1px solid #444; border-radius: 12px; padding: 12px 8px; color: #fff; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
@@ -84,8 +90,7 @@
         #webcam-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         
         #ar-overlay-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.2s; }
-        .lens-visual-element { font-size: 100px; text-shadow: 0 0 20px rgba(0,0,0,0.8); animation: floatLens 2s infinite ease-in-out; }
-        @keyframes floatLens { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .lens-visual-element { font-size: 100px; text-shadow: 0 0 20px rgba(0,0,0,0.8); }
 
         #active-song-sticker { position: absolute; top: 80px; left: 16px; background: rgba(0,0,0,0.6); border: 1px solid #fffc00; padding: 6px 12px; border-radius: 20px; font-size: 12px; color: #fffc00; z-index: 5; display: none; align-items: center; gap: 6px; backdrop-filter: blur(4px); }
 
@@ -106,15 +111,16 @@
         /* Chat Screen */
         #chat-screen { background: #121212; padding: 0; z-index: 15; }
         .chat-header { background: #181818; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
-        .chat-user-info { display: flex; align-items: center; gap: 10px; }
+        .chat-user-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .chat-avatar { width: 34px; height: 34px; background: #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; color: #fffc00; overflow: hidden; }
         .chat-avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .call-btn-in-chat { background: #22c55e; color: #fff; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(34,197,94,0.4); }
         
         #chat-box { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 14px; word-break: break-word; display: flex; gap: 8px; align-items: flex-start; }
+        .msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 14px; word-break: break-word; display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
         .msg.incoming { background: #222; align-self: flex-start; }
         .msg.outgoing { background: #fffc00; color: #000; align-self: flex-end; font-weight: 500; }
+        .msg-timer { font-size: 10px; opacity: 0.7; margin-top: 4px; display: block; }
         
         .chat-input-area { padding: 12px 16px; background: #181818; display: flex; gap: 10px; align-items: center; border-top: 1px solid #222; }
         .chat-input-area input { flex: 1; padding: 10px 16px; background: #2a2a2a; border: none; border-radius: 20px; color: #fff; outline: none; font-size: 14px; }
@@ -128,16 +134,33 @@
     <div class="app-container">
         <div id="flash-overlay"></div>
 
-        <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
-            <p>Original Snapchat Lenses & Dual Profiles</p>
+            <p>Snapchat Experience with Auto-Delete Chat</p>
             <input type="text" id="name" class="input-box" placeholder="Your Name">
             <input type="text" id="username" class="input-box" placeholder="Username">
             <button class="login-btn" onclick="login()">Enter Jhapki</button>
         </div>
 
-        <!-- Authentic Snapchat Lenses Modal -->
+        <div id="chat-settings-modal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+                <h4 style="color:#fffc00; font-size:16px;">⏱️ Delete Chats</h4>
+                <span style="font-size:12px; color:#aaa; cursor:pointer;" onclick="toggleChatSettings()">✕ Close</span>
+            </div>
+            <button class="chat-setting-option active" id="mode-viewing" onclick="setChatDeleteMode('viewing')">
+                <span>👁️ Delete After Viewing</span>
+                <span style="font-size:11px; opacity:0.7;">Default Snapchat</span>
+            </button>
+            <button class="chat-setting-option" id="mode-24hrs" onclick="setChatDeleteMode('24hrs')">
+                <span>⏳ Delete After 24 Hours</span>
+                <span style="font-size:11px; opacity:0.7;">24h</span>
+            </button>
+            <button class="chat-setting-option" id="mode-7days" onclick="setChatDeleteMode('7days')">
+                <span>📅 Delete After 7 Days</span>
+                <span style="font-size:11px; opacity:0.7;">7d</span>
+            </button>
+        </div>
+
         <div id="lenses-modal">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎭 Snapchat AR Lenses</span>
@@ -153,7 +176,6 @@
             </div>
         </div>
 
-        <!-- Music Search Modal -->
         <div id="music-modal">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎵 Search Song for Story</span>
@@ -167,7 +189,6 @@
             </div>
         </div>
 
-        <!-- Dual Profile Studio Modal -->
         <div id="avatar-studio">
             <div class="studio-header">
                 <h3>👥 Jhapki Profiles</h3>
@@ -219,7 +240,6 @@
             <button class="save-avatar-btn" onclick="saveProfiles()">Save Profile Changes</button>
         </div>
 
-        <!-- 1. MAP SCREEN WITH LIVE LOCATION -->
         <div id="map-screen" class="screen">
             <div class="top-bar" style="background:#0f172a;">
                 <div class="profile-avatar" id="map-avatar" onclick="openAvatarStudio()">
@@ -231,23 +251,22 @@
             </div>
             <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#1e293b; color:#fff; gap:14px; padding: 20px; text-align: center;">
                 <span style="font-size:50px;">🌍</span>
-                <h4 id="location-status-title">Live Location Sharing Active</h4>
+                <h4>Live Location Sharing Active</h4>
                 <p id="location-coords-text" style="font-size: 13px; color: #94a3b8;">Fetching precise coordinates...</p>
                 <button class="login-btn" style="max-width: 220px; padding: 10px; font-size: 13px;" onclick="fetchLiveLocation()">Refresh My Location</button>
             </div>
         </div>
 
-        <!-- 2. CHAT SCREEN -->
         <div id="chat-screen" class="screen">
             <div class="chat-header">
-                <div class="chat-user-info">
+                <div class="chat-user-info" onclick="toggleChatSettings()" title="Tap to change chat deletion settings">
                     <div class="chat-avatar" id="chat-avatar-box">
                         <img id="chat-avatar-img" src="">
                         <span id="chat-avatar-txt">👦</span>
                     </div>
                     <div>
-                        <h4 style="font-size: 15px;">Jhapki Community 🔥 30</h4>
-                        <span style="font-size: 11px; color: #22c55e;">Active Streak</span>
+                        <h4 style="font-size: 15px;">Jhapki Community 🔥 35</h4>
+                        <span id="chat-delete-status-label" style="font-size: 11px; color: #fffc00;">Delete after viewing 👁️</span>
                     </div>
                 </div>
                 <button class="call-btn-in-chat" onclick="startVoiceCall()">📞</button>
@@ -259,16 +278,13 @@
             </div>
         </div>
 
-        <!-- 3. CAMERA SCREEN WITH AR LENSES & MUSIC -->
         <div id="camera-screen" class="screen active">
             <video id="webcam-video" autoplay playsinline></video>
             
-            <!-- Dynamic AR Lens Overlay Layer -->
             <div id="ar-overlay-layer">
                 <div class="lens-visual-element" id="lens-icon-display" style="display: none;">🐶</div>
             </div>
 
-            <!-- Music Sticker Sticker -->
             <div id="active-song-sticker">🎵 <span id="current-song-label">Select a song...</span></div>
 
             <div class="top-bar">
@@ -299,7 +315,6 @@
             </div>
         </div>
 
-        <!-- 4. STORIES SCREEN -->
         <div id="stories-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
                 <h3>Stories & Public Feed</h3>
@@ -311,7 +326,6 @@
             </div>
         </div>
 
-        <!-- 5. SPOTLIGHT SCREEN -->
         <div id="spotlight-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
                 <h3>Spotlight</h3>
@@ -323,7 +337,6 @@
             </div>
         </div>
 
-        <!-- Bottom Navigation Bar -->
         <div class="bottom-nav">
             <button class="nav-item" onclick="switchTab('map', this)">📍</button>
             <button class="nav-item" onclick="switchTab('chat', this)">
@@ -352,6 +365,7 @@
         let publicDpUrl = null;
         let selectedSong = null;
         let currentActiveLens = 'Normal';
+        let chatDeleteMode = 'viewing'; // 'viewing', '24hrs', '7days'
 
         let bitmoji = {
             gender: 'boy',
@@ -382,6 +396,32 @@
             } else {
                 alert(data.message);
             }
+        }
+
+        // Chat Delete Settings
+        function toggleChatSettings() {
+            const modal = document.getElementById('chat-settings-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function setChatDeleteMode(mode) {
+            chatDeleteMode = mode;
+            document.querySelectorAll('.chat-setting-option').forEach(el => el.classList.remove('active'));
+            
+            let labelText = 'Delete after viewing 👁️';
+            if (mode === 'viewing') {
+                document.getElementById('mode-viewing').classList.add('active');
+                labelText = 'Delete after viewing 👁️';
+            } else if (mode === '24hrs') {
+                document.getElementById('mode-24hrs').classList.add('active');
+                labelText = 'Delete after 24 Hours ⏳';
+            } else if (mode === '7days') {
+                document.getElementById('mode-7days').classList.add('active');
+                labelText = 'Delete after 7 Days 📅';
+            }
+            document.getElementById('chat-delete-status-label').innerText = labelText;
+            toggleChatSettings();
+            alert(`⏱️ Chat deletion updated: ${labelText}`);
         }
 
         // AR Lenses System
@@ -627,7 +667,12 @@
             const msg = msgInput.value.trim();
             if (!msg) return;
             const avatarText = activeProfileMode === 'local' ? document.getElementById('cam-avatar-txt').innerText : '🌐';
-            socket.emit('send_snap', { sender: currentUser.name, message: msg, avatar: avatarText });
+            
+            let timerLabel = '👁️ Delete after viewing';
+            if (chatDeleteMode === '24hrs') timerLabel = '⏳ Expires in 24 hrs';
+            if (chatDeleteMode === '7days') timerLabel = '📅 Expires in 7 days';
+
+            socket.emit('send_snap', { sender: currentUser.name, message: msg, avatar: avatarText, timer: timerLabel });
             msgInput.value = '';
         }
 
@@ -638,14 +683,31 @@
         socket.on('receive_snap', (data) => {
             const box = document.getElementById('chat-box');
             const isSelf = currentUser && data.sender === currentUser.name;
-            box.innerHTML += `
-                <div class="msg ${isSelf ? 'outgoing' : 'incoming'}">
-                    <div style="font-size:18px;">${data.avatar || '👦'}</div>
-                    <div>
-                        <span style="font-size:10px; font-weight:bold; display:block; opacity:0.7;">${data.sender}</span>
-                        ${data.message}
-                    </div>
+            const msgId = 'msg_' + Date.now() + Math.random();
+            
+            const msgElement = document.createElement('div');
+            msgElement.className = `msg ${isSelf ? 'outgoing' : 'incoming'}`;
+            msgElement.id = msgId;
+            msgElement.innerHTML = `
+                <div style="font-size:18px;">${data.avatar || '👦'}</div>
+                <div>
+                    <span style="font-size:10px; font-weight:bold; display:block; opacity:0.7;">${data.sender}</span>
+                    ${data.message}
+                    <span class="msg-timer">${data.timer || '👁️ Delete after viewing'}</span>
                 </div>`;
+
+            // If "Delete after viewing", allow tap to open/disappear
+            if (chatDeleteMode === 'viewing') {
+                msgElement.onclick = function() {
+                    if (confirm("👁️ Open and view snap? It will disappear after viewing!")) {
+                        msgElement.style.opacity = '0.3';
+                        msgElement.innerHTML = `<div style="font-size:12px; font-style:italic; color:#aaa;">Opened / Viewed 👻</div>`;
+                        setTimeout(() => msgElement.remove(), 1500);
+                    }
+                };
+            }
+
+            box.appendChild(msgElement);
             box.scrollTop = box.scrollHeight;
         });
     </script>
