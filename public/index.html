@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jhapki - Bitmoji Avatar Studio</title>
+    <title>Jhapki - Dual Profile System</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
@@ -18,23 +18,27 @@
         .input-box { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 15px; outline: none; margin-bottom: 14px; }
         .login-btn { width: 100%; padding: 14px; background: #fffc00; color: #000; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; }
 
-        /* Advanced Bitmoji Avatar Studio */
+        /* Dual Profile Studio Modal */
         #avatar-studio { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 110; display: none; flex-direction: column; padding: 16px; overflow-y: auto; }
         .studio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .studio-header h3 { color: #fffc00; font-size: 18px; }
         .close-studio { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; }
         
-        .avatar-preview-card { width: 100%; height: 160px; background: linear-gradient(135deg, #2b1055, #7597de); border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; margin-bottom: 14px; border: 2px solid #fffc00; box-shadow: 0 10px 25px rgba(255,252,0,0.2); }
-        .avatar-display-large { font-size: 65px; transition: transform 0.2s; }
-        .avatar-tagline { font-size: 12px; color: #fffc00; font-weight: bold; margin-top: 6px; background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 12px; }
+        /* Profile Mode Switcher */
+        .profile-mode-switcher { display: flex; background: #1a1a1a; padding: 4px; border-radius: 12px; margin-bottom: 14px; border: 1px solid #333; }
+        .mode-btn { flex: 1; padding: 10px; background: transparent; border: none; color: #aaa; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 10px; text-align: center; }
+        .mode-btn.active { background: #fffc00; color: #000; }
 
-        /* Studio Tabs Navigation */
-        .studio-tabs { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; }
-        .studio-tab-btn { background: #222; border: 1px solid #444; color: #aaa; padding: 7px 12px; border-radius: 16px; font-size: 11px; cursor: pointer; white-space: nowrap; }
-        .studio-tab-btn.active { background: #fffc00; color: #000; font-weight: bold; border-color: #fffc00; }
+        /* Preview Area */
+        .profile-preview-card { width: 100%; height: 150px; background: linear-gradient(135deg, #2b1055, #7597de); border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; margin-bottom: 14px; border: 2px solid #fffc00; box-shadow: 0 10px 25px rgba(255,252,0,0.2); overflow: hidden; }
+        .profile-dp-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fffc00; display: none; }
+        .avatar-display-large { font-size: 60px; }
+        .profile-tagline { font-size: 12px; color: #fffc00; font-weight: bold; margin-top: 6px; background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 12px; }
 
-        .customizer-section { margin-bottom: 14px; display: none; }
-        .customizer-section.active-section { display: block; }
+        /* Sections */
+        .profile-section { display: none; }
+        .profile-section.active-section { display: block; }
+        .customizer-section { margin-bottom: 14px; }
         .customizer-section label { font-size: 12px; color: #fffc00; display: block; margin-bottom: 6px; font-weight: bold; }
         .option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .option-btn { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 9px; border-radius: 8px; font-size: 11px; cursor: pointer; text-align: center; }
@@ -48,6 +52,8 @@
         /* Top Bar */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; z-index: 10; }
         .profile-avatar { width: 38px; height: 38px; border-radius: 50%; background: #222; border: 2px solid #fffc00; display: flex; justify-content: center; align-items: center; font-weight: bold; color: #000; font-size: 18px; cursor: pointer; overflow: hidden; background-size: cover; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        
         .top-left-icons { display: flex; align-items: center; gap: 16px; }
         .icon-btn { background: none; border: none; color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
@@ -84,7 +90,8 @@
         #chat-screen { background: #121212; padding: 0; z-index: 15; }
         .chat-header { background: #181818; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
         .chat-user-info { display: flex; align-items: center; gap: 10px; }
-        .chat-avatar { width: 34px; height: 34px; background: #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; color: #fffc00; }
+        .chat-avatar { width: 34px; height: 34px; background: #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; color: #fffc00; overflow: hidden; }
+        .chat-avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
         .call-btn-in-chat { background: #22c55e; color: #fff; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(34,197,94,0.4); }
         
         #chat-box { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
@@ -107,107 +114,82 @@
         <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
-            <p>Create your custom Bitmoji & Snap Profile</p>
+            <p>Dual Profile: Local Bitmoji & Public Creator DP</p>
             <input type="text" id="name" class="input-box" placeholder="Your Name">
             <input type="text" id="username" class="input-box" placeholder="Username">
-            <button class="login-btn" onclick="login()">Continue to Jhapki</button>
+            <button class="login-btn" onclick="login()">Enter Jhapki</button>
         </div>
 
-        <!-- Comprehensive Bitmoji Avatar Studio -->
+        <!-- Dual Profile Studio Modal -->
         <div id="avatar-studio">
             <div class="studio-header">
-                <h3>🎨 Bitmoji Avatar Studio</h3>
+                <h3>👥 Jhapki Profiles</h3>
                 <button class="close-studio" onclick="closeAvatarStudio()">✕ Close</button>
             </div>
             
-            <div class="avatar-preview-card" id="avatar-preview-bg">
+            <!-- Switcher: Local Bitmoji vs Public Profile -->
+            <div class="profile-mode-switcher">
+                <button class="mode-btn active" id="btn-mode-local" onclick="switchProfileMode('local')">👻 Local Bitmoji</button>
+                <button class="mode-btn" id="btn-mode-public" onclick="switchProfileMode('public')">🌐 Public Profile</button>
+            </div>
+
+            <!-- Preview Area -->
+            <div class="profile-preview-card" id="profile-preview-bg">
+                <img id="public-dp-preview" class="profile-dp-img" src="" alt="Public DP">
                 <div class="avatar-display-large" id="avatar-display-icon">👦</div>
-                <div class="avatar-tagline" id="avatar-summary-tag">Party Boy • Fair • Party Wear</div>
+                <div class="profile-tagline" id="profile-summary-tag">Local Chat & Snap Map</div>
             </div>
 
-            <!-- Studio Tabs -->
-            <div class="studio-tabs">
-                <button class="studio-tab-btn active" onclick="switchStudioTab('gender', this)">👤 Type</button>
-                <button class="studio-tab-btn" onclick="switchStudioTab('skin', this)">🎨 Skin</button>
-                <button class="studio-tab-btn" onclick="switchStudioTab('face', this)">🗿 Face Shape</button>
-                <button class="studio-tab-btn" onclick="switchStudioTab('hair', this)">💇 Hair Style</button>
-                <button class="studio-tab-btn" onclick="switchStudioTab('body', this)">🏋️ Body Shape</button>
-                <button class="studio-tab-btn" onclick="switchStudioTab('outfit', this)">✨ Outfit</button>
-            </div>
+            <!-- 1. LOCAL BITMOJI PROFILE SECTION -->
+            <div id="section-local-profile" class="profile-section active-section">
+                <div class="customizer-section">
+                    <label>Select Bitmoji Gender & Style</label>
+                    <div class="option-grid">
+                        <button class="option-btn selected" onclick="setBitmojiOption('gender', 'boy', '👦 Party Boy', this)">👦 Party Boy</button>
+                        <button class="option-btn" onclick="setBitmojiOption('gender', 'girl', '👧 Party Girl', this)">👧 Party Girl</button>
+                        <button class="option-btn" onclick="setBitmojiOption('gender', 'cool', '😎 Cool Vibe', this)">😎 Cool Vibe</button>
+                    </div>
+                </div>
 
-            <!-- Section 1: Gender / Type -->
-            <div id="sec-gender" class="customizer-section active-section">
-                <label>Select Creator Profile</label>
-                <div class="option-grid">
-                    <button class="option-btn selected" onclick="setAvatarPart('gender', 'boy', '👦 Party Boy', this)">👦 Party Boy</button>
-                    <button class="option-btn" onclick="setAvatarPart('gender', 'girl', '👧 Party Girl', this)">👧 Party Girl</button>
-                    <button class="option-btn" onclick="setAvatarPart('gender', 'cool', '😎 Cool Vibe', this)">😎 Cool Creator</button>
+                <div class="customizer-section">
+                    <label>Bitmoji Outfit</label>
+                    <div class="option-grid">
+                        <button class="option-btn selected" onclick="setBitmojiOption('outfit', 'party', 'Party Wear', this)">✨ Party</button>
+                        <button class="option-btn" onclick="setBitmojiOption('outfit', 'casual', 'Casual Street', this)">👕 Casual</button>
+                        <button class="option-btn" onclick="setBitmojiOption('outfit', 'royal', 'Royal Gold', this)">👑 Royal</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Section 2: Skin Tone -->
-            <div id="sec-skin" class="customizer-section">
-                <label>Skin Tone & Complexion</label>
-                <div class="option-grid">
-                    <button class="option-btn selected" onclick="setAvatarPart('skin', 'fair', 'Fair', this)">🏻 Fair Tone</button>
-                    <button class="option-btn" onclick="setAvatarPart('skin', 'wheatish', 'Wheatish', this)">🏽 Wheatish</button>
-                    <button class="option-btn" onclick="setAvatarPart('skin', 'dark', 'Dark', this)">🏿 Dark Tone</button>
+            <!-- 2. PUBLIC CREATOR PROFILE SECTION -->
+            <div id="section-public-profile" class="profile-section">
+                <div class="customizer-section">
+                    <label>Upload Real Creator Photo (DP)</label>
+                    <input type="file" id="public-photo-input" accept="image/*" class="input-box" onchange="uploadPublicPhoto(event)">
+                </div>
+                <div class="customizer-section">
+                    <label>Public Story & Subscriber Settings</label>
+                    <p style="font-size:12px; color:#aaa; margin-bottom:10px;">Your public profile showcases your real photo DP, public stories, and subscriber highlights across Jhapki Spotlight & Map.</p>
+                    <button class="option-btn selected" style="width:100%; padding:12px;" onclick="alert('🌐 Public Profile & Story published to feed!')">Publish Public Story</button>
                 </div>
             </div>
 
-            <!-- Section 3: Face Shape -->
-            <div id="sec-face" class="customizer-section">
-                <label>Head & Face Shape</label>
-                <div class="option-grid">
-                    <button class="option-btn selected" onclick="setAvatarPart('face', 'oval', 'Oval Jaw', this)">🥚 Oval</button>
-                    <button class="option-btn" onclick="setAvatarPart('face', 'sharp', 'Sharp Jaw', this)">📐 Sharp Jaw</button>
-                    <button class="option-btn" onclick="setAvatarPart('face', 'round', 'Round Face', this)">⚪ Round</button>
-                </div>
-            </div>
-
-            <!-- Section 4: Hair Style -->
-            <div id="sec-hair" class="customizer-section">
-                <label>Hair Style & Color</label>
-                <div class="option-grid">
-                    <button class="option-btn selected" onclick="setAvatarPart('hair', 'spike', 'Spike Hair', this)">⚡ Spiky</button>
-                    <button class="option-btn" onclick="setAvatarPart('hair', 'fade', 'Fade Cut', this)">✂️ Fade Cut</button>
-                    <button class="option-btn" onclick="setAvatarPart('hair', 'waves', 'Long Waves', this)">🌊 Waves</button>
-                </div>
-            </div>
-
-            <!-- Section 5: Body Shape -->
-            <div id="sec-body" class="customizer-section">
-                <label>Body Build & Proportion</label>
-                <div class="option-grid">
-                    <button class="option-btn selected" onclick="setAvatarPart('body', 'athletic', 'Athletic Build', this)">💪 Athletic</button>
-                    <button class="option-btn" onclick="setAvatarPart('body', 'slim', 'Slim Fit', this)">🧍 Slim Fit</button>
-                    <button class="option-btn" onclick="setAvatarPart('body', 'curvy', 'Curvy / Plus', this)">✨ Stylish Build</button>
-                </div>
-            </div>
-
-            <!-- Section 6: Outfit / Clothing -->
-            <div id="sec-outfit" class="customizer-section">
-                <label>Party & Daily Outfits</label>
-                <div class="option-grid">
-                    <button class="option-btn selected" onclick="setAvatarPart('outfit', 'party', 'Party Wear', this)">✨ Party Sequins</button>
-                    <button class="option-btn" onclick="setAvatarPart('outfit', 'casual', 'Casual Street', this)">👕 Streetwear</button>
-                    <button class="option-btn" onclick="setAvatarPart('outfit', 'royal', 'Royal Sherwani', this)">👑 Royal Gold</button>
-                </div>
-            </div>
-
-            <button class="save-avatar-btn" onclick="saveAvatar()">Save & Sync Bitmoji</button>
+            <button class="save-avatar-btn" onclick="saveProfiles()">Save Profile Changes</button>
         </div>
 
         <!-- 1. MAP SCREEN -->
         <div id="map-screen" class="screen">
             <div class="top-bar" style="background:#0f172a;">
-                <div class="profile-avatar" id="map-avatar" onclick="openAvatarStudio()">👦</div>
+                <div class="profile-avatar" id="map-avatar" onclick="openAvatarStudio()">
+                    <img id="map-avatar-img" src="">
+                    <span id="map-avatar-txt">👦</span>
+                </div>
                 <h3>Snap Map</h3>
-                <button class="icon-btn" onclick="alert('Map Settings Opened')">⚙️</button>
+                <button class="icon-btn" onclick="alert('Map Settings')">⚙️</button>
             </div>
             <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#1e293b; color:#94a3b8; gap:10px;">
                 <span style="font-size:40px;">📍</span>
-                <p>Live Location sharing is active with friends.</p>
+                <p>Local Bitmoji sharing is active with friends.</p>
             </div>
         </div>
 
@@ -215,9 +197,12 @@
         <div id="chat-screen" class="screen">
             <div class="chat-header">
                 <div class="chat-user-info">
-                    <div class="chat-avatar" id="chat-avatar-text">👦</div>
+                    <div class="chat-avatar" id="chat-avatar-box">
+                        <img id="chat-avatar-img" src="">
+                        <span id="chat-avatar-txt">👦</span>
+                    </div>
                     <div>
-                        <h4 style="font-size: 15px;">Jhapki Community 🔥 15</h4>
+                        <h4 style="font-size: 15px;">Jhapki Community 🔥 20</h4>
                         <span style="font-size: 11px; color: #22c55e;">Active Streak</span>
                     </div>
                 </div>
@@ -225,7 +210,7 @@
             </div>
             <div id="chat-box"></div>
             <div class="chat-input-area">
-                <input type="text" id="message" placeholder="Send a snap..." onkeypress="handleKey(event)">
+                <input type="text" id="message" placeholder="Send snap..." onkeypress="handleKey(event)">
                 <button class="send-msg-btn" onclick="sendMessage()">➤</button>
             </div>
         </div>
@@ -233,23 +218,24 @@
         <!-- 3. CAMERA SCREEN -->
         <div id="camera-screen" class="screen active">
             <video id="webcam-video" autoplay playsinline></video>
-            <div id="ar-overlay-layer">🐶</div>
             
             <div class="top-bar">
                 <div class="top-left-icons">
-                    <div class="profile-avatar" id="cam-profile-avatar" onclick="openAvatarStudio()" title="Bitmoji Studio">👦</div>
+                    <div class="profile-avatar" id="cam-profile-avatar" onclick="openAvatarStudio()" title="Profiles">
+                        <img id="cam-avatar-img" src="">
+                        <span id="cam-avatar-txt">👦</span>
+                    </div>
                     <button class="icon-btn" onclick="openSearch()">🔍</button>
                 </div>
                 <div class="top-right-icons">
-                    <button class="badge-icon" onclick="alert('68 Friend requests')">👤+ <span class="badge">68</span></button>
+                    <button class="badge-icon" onclick="alert('68 Requests')">👤+ <span class="badge">68</span></button>
                 </div>
             </div>
 
             <div class="right-sidebar">
-                <button class="side-icon" id="flip-btn" onclick="flipCamera()" title="Flip Camera">🔄</button>
+                <button class="side-icon" id="flip-btn" onclick="flipCamera()" title="Flip">🔄</button>
                 <button class="side-icon" id="flash-btn" onclick="toggleFlash()" title="Flash">⚡</button>
-                <button class="side-icon" id="night-btn" onclick="toggleNightMode()" title="Night Mode">🌙</button>
-                <button class="side-icon" onclick="alert('Timer active')">⏱️</button>
+                <button class="side-icon" id="night-btn" onclick="toggleNightMode()" title="Night">🌙</button>
             </div>
 
             <div class="camera-footer">
@@ -263,12 +249,12 @@
         <!-- 4. STORIES SCREEN -->
         <div id="stories-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
-                <h3>Stories & Friends</h3>
+                <h3>Stories & Public Feed</h3>
                 <button class="icon-btn" onclick="alert('Settings')">⚙️</button>
             </div>
             <div style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#111; color:#aaa; gap:10px;">
-                <span style="font-size:40px;">👥</span>
-                <p>View friends' stories.</p>
+                <span style="font-size:40px;">🌐</span>
+                <p>Public Stories & Creator DP feed active.</p>
             </div>
         </div>
 
@@ -309,18 +295,12 @@
         let useFrontCamera = true;
         let mediaStream = null;
 
-        // Detailed Bitmoji Customizer State
-        let avatarConfig = {
+        // Profile State
+        let activeProfileMode = 'local'; // 'local' (Bitmoji) or 'public' (Real DP Photo)
+        let publicDpUrl = null;
+        let bitmoji = {
             gender: 'boy',
             genderText: 'Party Boy',
-            skin: 'fair',
-            skinText: 'Fair',
-            face: 'oval',
-            faceText: 'Oval Jaw',
-            hair: 'spike',
-            hairText: 'Spike Hair',
-            body: 'athletic',
-            bodyText: 'Athletic Build',
             outfit: 'party',
             outfitText: 'Party Wear'
         };
@@ -341,7 +321,7 @@
             if (data.success) {
                 currentUser = data.user;
                 document.getElementById('login-screen').style.display = 'none';
-                updateAvatarDisplay();
+                updateGlobalDisplay();
                 startCamera();
             } else {
                 alert(data.message);
@@ -357,53 +337,95 @@
             document.getElementById('avatar-studio').style.display = 'none';
         }
 
-        function switchStudioTab(sectionKey, btn) {
-            document.querySelectorAll('.studio-tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        function switchProfileMode(mode) {
+            activeProfileMode = mode;
+            document.getElementById('btn-mode-local').classList.toggle('active', mode === 'local');
+            document.getElementById('btn-mode-public').classList.toggle('active', mode === 'public');
 
-            document.querySelectorAll('.customizer-section').forEach(s => s.classList.remove('active-section'));
-            document.getElementById('sec-' + sectionKey).classList.add('active-section');
+            document.getElementById('section-local-profile').classList.toggle('active-section', mode === 'local');
+            document.getElementById('section-public-profile').classList.toggle('active-section', mode === 'public');
+            updatePreviewUI();
         }
 
-        function setAvatarPart(category, value, text, btn) {
-            avatarConfig[category] = value;
-            avatarConfig[category + 'Text'] = text;
+        function setBitmojiOption(category, value, text, btn) {
+            bitmoji[category] = value;
+            bitmoji[category + 'Text'] = text;
 
             const parent = btn.parentElement;
             parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-
             updatePreviewUI();
         }
 
+        function uploadPublicPhoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    publicDpUrl = e.target.result;
+                    updatePreviewUI();
+                    alert("🌐 Public Profile Photo (DP) loaded successfully!");
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
         function updatePreviewUI() {
-            let icon = '👦';
-            if (avatarConfig.gender === 'girl') icon = '👧';
-            if (avatarConfig.gender === 'cool') icon = '😎';
+            const dpImg = document.getElementById('public-dp-preview');
+            const bitmojiIcon = document.getElementById('avatar-display-icon');
+            const summaryTag = document.getElementById('profile-summary-tag');
 
-            // Add outfit flair
-            if (avatarConfig.outfit === 'royal') icon += '👑';
-            else if (avatarConfig.outfit === 'party') icon += '✨';
-            else icon += '👕';
+            if (activeProfileMode === 'public' && publicDpUrl) {
+                dpImg.src = publicDpUrl;
+                dpImg.style.display = 'block';
+                bitmojiIcon.style.display = 'none';
+                summaryTag.innerText = "🌐 Public Creator Profile (Real DP & Public Stories)";
+            } else {
+                dpImg.style.display = 'none';
+                bitmojiIcon.style.display = 'block';
+                
+                let icon = '👦';
+                if (bitmoji.gender === 'girl') icon = '👧';
+                if (bitmoji.gender === 'cool') icon = '😎';
+                if (bitmoji.outfit === 'royal') icon += '👑';
+                else if (bitmoji.outfit === 'party') icon += '✨';
+                else icon += '👕';
 
-            document.getElementById('avatar-display-icon').innerText = icon;
-            document.getElementById('avatar-summary-tag').innerText = `${avatarConfig.genderText} • ${avatarConfig.skinText} • ${avatarConfig.outfitText}`;
+                bitmojiIcon.innerText = icon;
+                summaryTag.innerText = `👻 Local Bitmoji (${bitmoji.genderText} • ${bitmoji.outfitText})`;
+            }
         }
 
-        function saveAvatar() {
-            updateAvatarDisplay();
+        function saveProfiles() {
+            updateGlobalDisplay();
             closeAvatarStudio();
-            alert("✨ Bitmoji Avatar Studio updated & synced successfully!");
+            alert("✨ Profile updated successfully!");
         }
 
-        function updateAvatarDisplay() {
-            let icon = '👦';
-            if (avatarConfig.gender === 'girl') icon = '👧';
-            if (avatarConfig.gender === 'cool') icon = '😎';
+        function updateGlobalDisplay() {
+            const avatarElements = [
+                { img: 'map-avatar-img', txt: 'map-avatar-txt' },
+                { img: 'chat-avatar-img', txt: 'chat-avatar-txt' },
+                { img: 'cam-avatar-img', txt: 'cam-avatar-txt' }
+            ];
 
-            document.getElementById('map-avatar').innerText = icon;
-            document.getElementById('cam-profile-avatar').innerText = icon;
-            document.getElementById('chat-avatar-text').innerText = icon;
+            avatarElements.forEach(el => {
+                const imgEl = document.getElementById(el.img);
+                const txtEl = document.getElementById(el.txt);
+
+                if (activeProfileMode === 'public' && publicDpUrl) {
+                    imgEl.src = publicDpUrl;
+                    imgEl.style.display = 'block';
+                    txtEl.style.display = 'none';
+                } else {
+                    imgEl.style.display = 'none';
+                    txtEl.style.display = 'block';
+                    let icon = '👦';
+                    if (bitmoji.gender === 'girl') icon = '👧';
+                    if (bitmoji.gender === 'cool') icon = '😎';
+                    txtEl.innerText = icon;
+                }
+            });
         }
 
         async function startCamera() {
@@ -424,17 +446,14 @@
         let flashOn = false;
         function toggleFlash() {
             flashOn = !flashOn;
-            const btn = document.getElementById('flash-btn');
-            btn.classList.toggle('active-toggle', flashOn);
-            alert(flashOn ? "Flash ON" : "Flash OFF");
+            document.getElementById('flash-btn').classList.toggle('active-toggle', flashOn);
         }
 
         let nightMode = false;
         function toggleNightMode() {
             nightMode = !nightMode;
             const video = document.getElementById('webcam-video');
-            const btn = document.getElementById('night-btn');
-            btn.classList.toggle('active-toggle', nightMode);
+            document.getElementById('night-btn').classList.toggle('active-toggle', nightMode);
             video.style.filter = nightMode ? 'brightness(1.8) contrast(1.2)' : 'none';
         }
 
@@ -442,7 +461,7 @@
             const flash = document.getElementById('flash-overlay');
             flash.style.opacity = '1';
             setTimeout(() => { flash.style.opacity = '0'; }, 200);
-            alert("📸 Snap Captured Successfully with Bitmoji Overlay!");
+            alert("📸 Snap Captured Successfully!");
         }
 
         function previewGallery(event) {
@@ -451,7 +470,7 @@
         }
 
         function openSearch() {
-            let query = prompt("Search friends or creators:");
+            let query = prompt("Search friends or public stories:");
             if (query) alert("Searching: " + query);
         }
 
@@ -469,14 +488,15 @@
         }
 
         function startVoiceCall() {
-            if (confirm("📞 Start secure audio call?")) alert("Calling...");
+            if (confirm("📞 Start secure call?")) alert("Calling...");
         }
 
         function sendMessage() {
             const msgInput = document.getElementById('message');
             const msg = msgInput.value.trim();
             if (!msg) return;
-            socket.emit('send_snap', { sender: currentUser.name, message: msg, avatar: document.getElementById('cam-profile-avatar').innerText });
+            const avatarText = activeProfileMode === 'local' ? document.getElementById('cam-avatar-txt').innerText : '🌐';
+            socket.emit('send_snap', { sender: currentUser.name, message: msg, avatar: avatarText });
             msgInput.value = '';
         }
 
@@ -488,11 +508,10 @@
             const box = document.getElementById('chat-box');
             const isSelf = currentUser && data.sender === currentUser.name;
             const bubbleClass = isSelf ? 'outgoing' : 'incoming';
-            const avtr = data.avatar || '👦';
             
             box.innerHTML += `
                 <div class="msg ${bubbleClass}">
-                    <div style="font-size:18px;">${avtr}</div>
+                    <div style="font-size:18px;">${data.avatar || '👦'}</div>
                     <div>
                         <span style="font-size:10px; font-weight:bold; display:block; opacity:0.7;">${data.sender}</span>
                         ${data.message}
