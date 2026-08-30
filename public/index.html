@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jhapki - Music & Live Map</title>
+    <title>Jhapki - Original Snapchat Lenses</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #000; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
@@ -18,11 +18,17 @@
         .input-box { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 15px; outline: none; margin-bottom: 14px; }
         .login-btn { width: 100%; padding: 14px; background: #fffc00; color: #000; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; }
 
+        /* AR Lenses Selection Menu */
+        #lenses-modal { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: 92%; background: rgba(18,18,18,0.96); border: 1px solid #333; border-radius: 20px; z-index: 95; display: none; padding: 16px; backdrop-filter: blur(12px); }
+        .lenses-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; max-height: 220px; overflow-y: auto; }
+        .lens-item { background: #222; border: 1px solid #444; border-radius: 12px; padding: 12px 8px; color: #fff; font-size: 12px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .lens-item.active { border-color: #fffc00; background: #2a2a00; color: #fffc00; font-weight: bold; }
+
         /* Music Search Modal */
-        #music-modal { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: 92%; background: rgba(18,18,18,0.95); border: 1px solid #333; border-radius: 20px; z-index: 95; display: none; padding: 16px; backdrop-filter: blur(12px); max-height: 350px; overflow-y: auto; }
+        #music-modal { position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); width: 92%; background: rgba(18,18,18,0.95); border: 1px solid #333; border-radius: 20px; z-index: 95; display: none; padding: 16px; backdrop-filter: blur(12px); max-height: 320px; overflow-y: auto; }
         .music-search-input { width: 100%; padding: 10px 14px; background: #2a2a2a; border: none; border-radius: 10px; color: #fff; font-size: 13px; outline: none; margin-bottom: 12px; }
-        .song-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #222; border-radius: 10px; margin-bottom: 8px; cursor: pointer; border: 1px solid transparent; }
-        .song-item:hover { border-color: #fffc00; }
+        .song-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #222; border-radius: 10px; margin-bottom: 8px; cursor: pointer; }
+        .song-item:hover { border: 1px solid #fffc00; }
         .song-info h5 { font-size: 13px; color: #fff; }
         .song-info p { font-size: 11px; color: #888; }
         .select-song-btn { background: #fffc00; color: #000; font-size: 11px; font-weight: bold; padding: 5px 10px; border-radius: 6px; border: none; }
@@ -73,11 +79,14 @@
         .side-icon.active-toggle { background: #fffc00; color: #000; }
         .side-icon:active { transform: scale(0.9); }
 
-        /* Camera View & Shutter */
+        /* Camera View & AR Overlays */
         #camera-screen { background: #000; }
         #webcam-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         
-        /* Active Song Story Sticker on Camera */
+        #ar-overlay-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3; pointer-events: none; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.2s; }
+        .lens-visual-element { font-size: 100px; text-shadow: 0 0 20px rgba(0,0,0,0.8); animation: floatLens 2s infinite ease-in-out; }
+        @keyframes floatLens { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
         #active-song-sticker { position: absolute; top: 80px; left: 16px; background: rgba(0,0,0,0.6); border: 1px solid #fffc00; padding: 6px 12px; border-radius: 20px; font-size: 12px; color: #fffc00; z-index: 5; display: none; align-items: center; gap: 6px; backdrop-filter: blur(4px); }
 
         .camera-footer { position: absolute; bottom: 70px; width: 100%; display: flex; justify-content: space-around; align-items: center; padding: 0 30px; z-index: 10; }
@@ -122,10 +131,26 @@
         <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
-            <p>Music Search Stories & Live Snap Map</p>
+            <p>Original Snapchat Lenses & Dual Profiles</p>
             <input type="text" id="name" class="input-box" placeholder="Your Name">
             <input type="text" id="username" class="input-box" placeholder="Username">
             <button class="login-btn" onclick="login()">Enter Jhapki</button>
+        </div>
+
+        <!-- Authentic Snapchat Lenses Modal -->
+        <div id="lenses-modal">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎭 Snapchat AR Lenses</span>
+                <span style="font-size:12px; color:#aaa; cursor:pointer;" onclick="toggleLenses()">✕ Close</span>
+            </div>
+            <div class="lenses-grid">
+                <div class="lens-item active" onclick="selectLens('none', 'Normal', this)"><span>📷</span>Normal</div>
+                <div class="lens-item" onclick="selectLens('dog', '🐶 Puppy', this)"><span>🐶</span>Golden Dog</div>
+                <div class="lens-item" onclick="selectLens('crown', '👑 Princess', this)"><span>👑</span>Flower Crown</div>
+                <div class="lens-item" onclick="selectLens('hearts', '💖 Heart Eyes', this)"><span>💖</span>Heart Eyes</div>
+                <div class="lens-item" onclick="selectLens('baby', '👶 Soft Glow', this)"><span>👶</span>Baby Face</div>
+                <div class="lens-item" onclick="selectLens('fire', '🔥 Neon Cyber', this)"><span>🔥</span>Cyber Neon</div>
+            </div>
         </div>
 
         <!-- Music Search Modal -->
@@ -134,24 +159,11 @@
                 <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎵 Search Song for Story</span>
                 <span style="font-size:12px; color:#aaa; cursor:pointer;" onclick="toggleMusicModal()">✕ Close</span>
             </div>
-            <input type="text" id="song-search-input" class="music-search-input" placeholder="Search track (e.g. Main Barish, Hamnawa)..." oninput="filterSongs()">
+            <input type="text" id="song-search-input" class="music-search-input" placeholder="Search track..." oninput="filterSongs()">
             <div id="song-list-container">
-                <div class="song-item" onclick="selectSong('Main Barish Ban Jaun - Jubin Nautiyal')">
-                    <div class="song-info"><h5>Main Barish Ban Jaun</h5><p>Jubin Nautiyal • 2.4M Snaps</p></div>
-                    <button class="select-song-btn">Select</button>
-                </div>
-                <div class="song-item" onclick="selectSong('Hamnawa - Jubin Nautiyal')">
-                    <div class="song-info"><h5>Hamnawa Mere</h5><p>Jubin Nautiyal • 1.8M Snaps</p></div>
-                    <button class="select-song-btn">Select</button>
-                </div>
-                <div class="song-item" onclick="selectSong('Pehle Bhi Main - Animal')">
-                    <div class="song-info"><h5>Pehle Bhi Main</h5><p>Vishal Mishra • 4.1M Snaps</p></div>
-                    <button class="select-song-btn">Select</button>
-                </div>
-                <div class="song-item" onclick="selectSong('Raataan Lambiyan - Jubin Nautiyal')">
-                    <div class="song-info"><h5>Raataan Lambiyan</h5><p>Tanishk Bagchi • 3.2M Snaps</p></div>
-                    <button class="select-song-btn">Select</button>
-                </div>
+                <div class="song-item" onclick="selectSong('Main Barish Ban Jaun - Jubin')"><div class="song-info"><h5>Main Barish Ban Jaun</h5><p>Jubin Nautiyal</p></div><button class="select-song-btn">Select</button></div>
+                <div class="song-item" onclick="selectSong('Hamnawa Mere - Jubin')"><div class="song-info"><h5>Hamnawa Mere</h5><p>Jubin Nautiyal</p></div><button class="select-song-btn">Select</button></div>
+                <div class="song-item" onclick="selectSong('Pehle Bhi Main - Animal')"><div class="song-info"><h5>Pehle Bhi Main</h5><p>Vishal Mishra</p></div><button class="select-song-btn">Select</button></div>
             </div>
         </div>
 
@@ -234,7 +246,7 @@
                         <span id="chat-avatar-txt">👦</span>
                     </div>
                     <div>
-                        <h4 style="font-size: 15px;">Jhapki Community 🔥 25</h4>
+                        <h4 style="font-size: 15px;">Jhapki Community 🔥 30</h4>
                         <span style="font-size: 11px; color: #22c55e;">Active Streak</span>
                     </div>
                 </div>
@@ -247,11 +259,16 @@
             </div>
         </div>
 
-        <!-- 3. CAMERA SCREEN WITH MUSIC STICKER -->
+        <!-- 3. CAMERA SCREEN WITH AR LENSES & MUSIC -->
         <div id="camera-screen" class="screen active">
             <video id="webcam-video" autoplay playsinline></video>
             
-            <!-- Music Sticker on Camera Preview -->
+            <!-- Dynamic AR Lens Overlay Layer -->
+            <div id="ar-overlay-layer">
+                <div class="lens-visual-element" id="lens-icon-display" style="display: none;">🐶</div>
+            </div>
+
+            <!-- Music Sticker Sticker -->
             <div id="active-song-sticker">🎵 <span id="current-song-label">Select a song...</span></div>
 
             <div class="top-bar">
@@ -278,7 +295,7 @@
                 <input type="file" id="gallery-input" style="display:none" accept="image/*" onchange="previewGallery(event)">
                 <div class="gallery-preview" onclick="document.getElementById('gallery-input').click()">🖼️</div>
                 <button class="shutter-btn" onclick="captureSnap()"><div class="shutter-inner"></div></button>
-                <button class="lens-btn" onclick="alert('AR Lenses Active')">😃</button>
+                <button class="lens-btn" onclick="toggleLenses()" title="AR Lenses">😃</button>
             </div>
         </div>
 
@@ -334,6 +351,7 @@
         let activeProfileMode = 'local';
         let publicDpUrl = null;
         let selectedSong = null;
+        let currentActiveLens = 'Normal';
 
         let bitmoji = {
             gender: 'boy',
@@ -360,17 +378,59 @@
                 document.getElementById('login-screen').style.display = 'none';
                 updateGlobalDisplay();
                 startCamera();
-                fetchLiveLocation(); // Initialize location on login
+                fetchLiveLocation();
             } else {
                 alert(data.message);
             }
         }
 
-        // Live Location System using Geolocation API
+        // AR Lenses System
+        function toggleLenses() {
+            const modal = document.getElementById('lenses-modal');
+            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function selectLens(type, lensName, btn) {
+            document.querySelectorAll('.lens-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentActiveLens = lensName;
+
+            const iconDisplay = document.getElementById('lens-icon-display');
+            const video = document.getElementById('webcam-video');
+
+            if (type === 'none') {
+                iconDisplay.style.display = 'none';
+                video.style.filter = 'none';
+            } else if (type === 'dog') {
+                iconDisplay.innerText = '🐶🐾';
+                iconDisplay.style.display = 'block';
+                video.style.filter = 'contrast(1.15) saturate(1.2)';
+            } else if (type === 'crown') {
+                iconDisplay.innerText = '👑🌸';
+                iconDisplay.style.display = 'block';
+                video.style.filter = 'brightness(1.1) drop-shadow(0 0 10px pink)';
+            } else if (type === 'hearts') {
+                iconDisplay.innerText = '💖✨';
+                iconDisplay.style.display = 'block';
+                video.style.filter = 'hue-rotate(15deg) contrast(1.1)';
+            } else if (type === 'baby') {
+                iconDisplay.innerText = '👶✨';
+                iconDisplay.style.display = 'block';
+                video.style.filter = 'blur(0.2px) brightness(1.25) contrast(0.95)';
+            } else if (type === 'fire') {
+                iconDisplay.innerText = '🔥⚡';
+                iconDisplay.style.display = 'block';
+                video.style.filter = 'sepia(0.4) contrast(1.3) brightness(1.1)';
+            }
+            toggleLenses();
+            alert(`🎭 Applied Lens: ${lensName}`);
+        }
+
+        // Live Location System
         function fetchLiveLocation() {
             const statusText = document.getElementById('location-coords-text');
             if (navigator.geolocation) {
-                statusText.innerText = "Locating your precise coordinates...";
+                statusText.innerText = "Locating precise coordinates...";
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const lat = position.coords.latitude.toFixed(4);
@@ -378,16 +438,16 @@
                         statusText.innerText = `📍 Latitude: ${lat}, Longitude: ${lng} (India)`;
                     },
                     (error) => {
-                        statusText.innerText = "⚠️ Location permission denied or unavailable. Default: Ahmedabad, India";
+                        statusText.innerText = "⚠️ Location permission denied. Default: Ahmedabad, India";
                     },
                     { timeout: 10000 }
                 );
             } else {
-                statusText.innerText = "Geolocation is not supported by your browser.";
+                statusText.innerText = "Geolocation not supported.";
             }
         }
 
-        // Music / Song Search Feature
+        // Music Search
         function toggleMusicModal() {
             const modal = document.getElementById('music-modal');
             modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
@@ -395,10 +455,8 @@
 
         function filterSongs() {
             const query = document.getElementById('song-search-input').value.toLowerCase();
-            const items = document.querySelectorAll('.song-item');
-            items.forEach(item => {
-                const text = item.innerText.toLowerCase();
-                item.style.display = text.includes(query) ? 'flex' : 'none';
+            document.querySelectorAll('.song-item').forEach(item => {
+                item.style.display = item.innerText.toLowerCase().includes(query) ? 'flex' : 'none';
             });
         }
 
@@ -407,7 +465,7 @@
             document.getElementById('current-song-label').innerText = songName;
             document.getElementById('active-song-sticker').style.display = 'flex';
             toggleMusicModal();
-            alert(`🎵 Song attached to story: ${songName}`);
+            alert(`🎵 Song attached: ${songName}`);
         }
 
         function openAvatarStudio() {
@@ -423,7 +481,6 @@
             activeProfileMode = mode;
             document.getElementById('btn-mode-local').classList.toggle('active', mode === 'local');
             document.getElementById('btn-mode-public').classList.toggle('active', mode === 'public');
-
             document.getElementById('section-local-profile').classList.toggle('active-section', mode === 'local');
             document.getElementById('section-public-profile').classList.toggle('active-section', mode === 'public');
             updatePreviewUI();
@@ -432,9 +489,7 @@
         function setBitmojiOption(category, value, text, btn) {
             bitmoji[category] = value;
             bitmoji[category + 'Text'] = text;
-
-            const parent = btn.parentElement;
-            parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+            btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
             updatePreviewUI();
         }
@@ -443,10 +498,10 @@
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = (e) => {
                     publicDpUrl = e.target.result;
                     updatePreviewUI();
-                    alert("🌐 Public Profile Photo (DP) loaded successfully!");
+                    alert("🌐 Public Profile DP uploaded successfully!");
                 }
                 reader.readAsDataURL(file);
             }
@@ -461,20 +516,18 @@
                 dpImg.src = publicDpUrl;
                 dpImg.style.display = 'block';
                 bitmojiIcon.style.display = 'none';
-                summaryTag.innerText = "🌐 Public Creator Profile (Real DP & Public Stories)";
+                summaryTag.innerText = "🌐 Public Creator Profile";
             } else {
                 dpImg.style.display = 'none';
                 bitmojiIcon.style.display = 'block';
-                
                 let icon = '👦';
                 if (bitmoji.gender === 'girl') icon = '👧';
                 if (bitmoji.gender === 'cool') icon = '😎';
                 if (bitmoji.outfit === 'royal') icon += '👑';
                 else if (bitmoji.outfit === 'party') icon += '✨';
                 else icon += '👕';
-
                 bitmojiIcon.innerText = icon;
-                summaryTag.innerText = `👻 Local Bitmoji (${bitmoji.genderText} • ${bitmoji.outfitText})`;
+                summaryTag.innerText = `👻 Local Bitmoji (${bitmoji.genderText})`;
             }
         }
 
@@ -485,16 +538,9 @@
         }
 
         function updateGlobalDisplay() {
-            const avatarElements = [
-                { img: 'map-avatar-img', txt: 'map-avatar-txt' },
-                { img: 'chat-avatar-img', txt: 'chat-avatar-txt' },
-                { img: 'cam-avatar-img', txt: 'cam-avatar-txt' }
-            ];
-
-            avatarElements.forEach(el => {
-                const imgEl = document.getElementById(el.img);
-                const txtEl = document.getElementById(el.txt);
-
+            ['map', 'chat', 'cam'].forEach(prefix => {
+                const imgEl = document.getElementById(`${prefix}-avatar-img`);
+                const txtEl = document.getElementById(`${prefix}-avatar-txt`);
                 if (activeProfileMode === 'public' && publicDpUrl) {
                     imgEl.src = publicDpUrl;
                     imgEl.style.display = 'block';
@@ -512,11 +558,10 @@
 
         async function startCamera() {
             try {
-                if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
-                const constraints = { video: { facingMode: useFrontCamera ? 'user' : 'environment' }, audio: false };
-                mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+                if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: useFrontCamera ? 'user' : 'environment' }, audio: false });
                 document.getElementById('webcam-video').srcObject = mediaStream;
-            } catch (err) { console.log("Camera access error:", err); }
+            } catch (err) { console.log("Camera error:", err); }
         }
 
         function flipCamera() {
@@ -534,26 +579,23 @@
         let nightMode = false;
         function toggleNightMode() {
             nightMode = !nightMode;
-            const video = document.getElementById('webcam-video');
             document.getElementById('night-btn').classList.toggle('active-toggle', nightMode);
-            video.style.filter = nightMode ? 'brightness(1.8) contrast(1.2)' : 'none';
+            document.getElementById('webcam-video').style.filter = nightMode ? 'brightness(1.8) contrast(1.2)' : 'none';
         }
 
         function captureSnap() {
             const flash = document.getElementById('flash-overlay');
             flash.style.opacity = '1';
             setTimeout(() => { flash.style.opacity = '0'; }, 200);
-            const songMsg = selectedSong ? ` with music [🎵 ${selectedSong}]` : '';
-            alert(`📸 Snap Captured Successfully${songMsg}!`);
+            alert(`📸 Snap Captured with ${currentActiveLens} Lens!`);
         }
 
         function previewGallery(event) {
-            const file = event.target.files[0];
-            if (file) alert("🖼️ Gallery image selected: " + file.name);
+            if (event.target.files[0]) alert("🖼️ Gallery image selected.");
         }
 
         function openSearch() {
-            let query = prompt("Search friends or public stories:");
+            let query = prompt("Search friends or stories:");
             if (query) alert("Searching: " + query);
         }
 
@@ -564,12 +606,15 @@
             if (tabName === 'map') {
                 document.getElementById('map-screen').classList.add('active');
                 fetchLiveLocation();
+            } else if (tabName === 'chat') {
+                document.getElementById('chat-screen').classList.add('active');
+            } else if (tabName === 'camera') {
+                document.getElementById('camera-screen').classList.add('active');
+            } else if (tabName === 'stories') {
+                document.getElementById('stories-screen').classList.add('active');
+            } else if (tabName === 'spotlight') {
+                document.getElementById('spotlight-screen').classList.add('active');
             }
-            else if (tabName === 'chat') document.getElementById('chat-screen').classList.add('active');
-            else if (tabName === 'camera') document.getElementById('camera-screen').classList.add('active');
-            else if (tabName === 'stories') document.getElementById('stories-screen').classList.add('active');
-            else if (tabName === 'spotlight') document.getElementById('spotlight-screen').classList.add('active');
-            
             if (el) el.classList.add('active');
         }
 
@@ -593,10 +638,8 @@
         socket.on('receive_snap', (data) => {
             const box = document.getElementById('chat-box');
             const isSelf = currentUser && data.sender === currentUser.name;
-            const bubbleClass = isSelf ? 'outgoing' : 'incoming';
-            
             box.innerHTML += `
-                <div class="msg ${bubbleClass}">
+                <div class="msg ${isSelf ? 'outgoing' : 'incoming'}">
                     <div style="font-size:18px;">${data.avatar || '👦'}</div>
                     <div>
                         <span style="font-size:10px; font-weight:bold; display:block; opacity:0.7;">${data.sender}</span>
