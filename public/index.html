@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jhapki - Snapchat Profile UI</title>
+    <title>Jhapki - Snapchat Chat Experience</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="/icon.svg">
     <meta name="theme-color" content="#fffc00">
@@ -21,7 +21,7 @@
         .input-box { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 15px; outline: none; margin-bottom: 14px; }
         .login-btn { width: 100%; padding: 14px; background: #fffc00; color: #000; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; }
 
-        /* Exact Snapchat Profile Bottom Sheet Modal */
+        /* Profile Bottom Sheet Modal */
         #avatar-studio { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 110; display: none; flex-direction: column; justify-content: flex-end; backdrop-filter: blur(4px); }
         .profile-sheet { width: 100%; max-height: 88vh; background: #f3f4f6; color: #111; border-radius: 28px 28px 0 0; padding: 14px 18px 24px 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; position: relative; animation: slideUpSheet 0.25s ease; }
         @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -121,29 +121,29 @@
         .nav-dot { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: #00d2ff; border-radius: 50%; }
         .nav-dot-purple { position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; background: #b000ff; border-radius: 50%; }
 
-        /* Chat Screen */
+        /* Chat Screen (Exact Match with Screenshot 9709.jpg) */
         #chat-screen { background: #121212; padding: 0; z-index: 15; }
-        .chat-header { background: #181818; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+        .chat-header { background: #181818; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
         .chat-user-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .chat-avatar { width: 34px; height: 34px; background: #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; color: #fffc00; overflow: hidden; }
-        .chat-avatar img { width: 100%; height: 100%; object-fit: cover; display: none; }
+        .chat-partner-avatar { width: 34px; height: 34px; background: #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; color: #fffc00; overflow: hidden; }
+        .chat-partner-name { font-size: 15px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 4px; }
         
-        .chat-header-actions { display: flex; gap: 8px; align-items: center; }
-        .security-action-btn { background: #222; border: 1px solid #444; color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .call-btn-in-chat { background: #22c55e; color: #fff; border: none; width: 38px; height: 38px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 18px; }
+        .chat-header-actions { display: flex; gap: 16px; align-items: center; }
+        .call-icon-btn { background: none; border: none; color: #fff; font-size: 19px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         
-        #chat-box { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 14px; word-break: break-word; display: flex; gap: 8px; align-items: flex-start; cursor: pointer; }
-        .msg.incoming { background: #222; align-self: flex-start; }
+        #chat-box { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #121212; }
+        .msg { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 14px; word-break: break-word; display: flex; flex-direction: column; gap: 4px; }
+        .msg.incoming { background: #1e1e1e; color: #fff; align-self: flex-start; border: 1px solid #2a2a2a; }
         .msg.outgoing { background: #fffc00; color: #000; align-self: flex-end; font-weight: 500; }
         
         .system-alert-msg { align-self: center; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #fca5a5; padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: bold; text-align: center; margin: 6px 0; }
         .system-alert-msg.recording { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: #d8b4fe; }
-        .msg-timer { font-size: 10px; opacity: 0.7; margin-top: 4px; display: block; }
         
-        .chat-input-area { padding: 12px 16px; background: #181818; display: flex; gap: 10px; align-items: center; border-top: 1px solid #222; }
-        .chat-input-area input { flex: 1; padding: 10px 16px; background: #2a2a2a; border: none; border-radius: 20px; color: #fff; outline: none; font-size: 14px; }
-        .send-msg-btn { background: #fffc00; color: #000; border: none; width: 38px; height: 38px; border-radius: 50%; font-weight: bold; cursor: pointer; }
+        /* Exact Snapchat Input Area */
+        .chat-input-area { padding: 10px 14px; background: #181818; display: flex; gap: 12px; align-items: center; border-top: 1px solid #222; }
+        .chat-input-pill { flex: 1; background: #26262a; border-radius: 22px; display: flex; align-items: center; padding: 0 14px; border: 1px solid #333; }
+        .chat-input-pill input { flex: 1; background: transparent; border: none; color: #fff; outline: none; font-size: 14px; padding: 10px 0; }
+        .chat-action-icon { background: none; border: none; color: #aaa; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         #flash-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:#fff; z-index:99; opacity:0; pointer-events:none; transition: opacity 0.2s; }
     </style>
@@ -156,23 +156,21 @@
         <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
-            <p>Snapchat Experience</p>
+            <p>Snapchat Chat Experience</p>
             <input type="text" id="name" class="input-box" placeholder="Your Name">
             <input type="text" id="username" class="input-box" placeholder="Username">
             <button class="login-btn" onclick="login()">Enter Jhapki</button>
         </div>
 
-        <!-- Exact Snapchat Profile Bottom Sheet Modal -->
+        <!-- Profile Bottom Sheet Modal -->
         <div id="avatar-studio" onclick="closeAvatarStudio(event)">
             <div class="profile-sheet" onclick="event.stopPropagation()">
                 <div class="sheet-handle"></div>
-                
                 <div class="profile-hero-header">
-                    <button class="hero-action-btn" onclick="alert('👕 Avatar Studio & Wardrobe')">👔</button>
+                    <button class="hero-action-btn" onclick="alert('👕 Wardrobe Studio')">👔</button>
                     <div class="hero-avatar-display" id="sheet-avatar-icon">👩‍🦰✨</div>
-                    <button class="hero-action-btn" onclick="alert('🖼️ Memories & Gallery')">🖼️</button>
+                    <button class="hero-action-btn" onclick="alert('🖼️ Memories')">🖼️</button>
                 </div>
-
                 <div class="profile-card-main">
                     <div class="profile-top-row">
                         <div class="snapcode-box">👻</div>
@@ -181,29 +179,15 @@
                             <p id="profile-display-username">@niku2969</p>
                         </div>
                     </div>
-
                     <div class="badges-row">
                         <div class="profile-pill-badge">👻 126,676</div>
                         <div class="profile-pill-badge">♋ Cancer</div>
                     </div>
                 </div>
-
-                <div class="email-verify-box" id="email-box">
-                    <div class="email-verify-info">
-                        <span class="email-icon">✉️</span>
-                        <div>
-                            <h5>Verify your email</h5>
-                            <p>Tap to help secure your account</p>
-                        </div>
-                    </div>
-                    <button class="close-email-btn" onclick="document.getElementById('email-box').style.display='none'">✕</button>
-                </div>
-
                 <div class="stories-section-header">
                     <h4>My Stories</h4>
                     <button class="private-story-pill">+ Private Story</button>
                 </div>
-
                 <div class="stories-tray">
                     <div class="my-story-tile" style="background: linear-gradient(135deg, #444, #111);">
                         <div class="story-views-pill">👁️ 50</div>
@@ -215,26 +199,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Chat Settings Modal -->
-        <div id="chat-settings-modal">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                <h4 style="color:#fffc00; font-size:16px;">⏱️ Delete Chats</h4>
-                <span style="font-size:12px; color:#aaa; cursor:pointer;" onclick="toggleChatSettings()">✕ Close</span>
-            </div>
-            <button class="chat-setting-option active" id="mode-viewing" onclick="setChatDeleteMode('viewing')">
-                <span>👁️ Delete After Viewing</span>
-                <span style="font-size:11px; opacity:0.7;">Default</span>
-            </button>
-            <button class="chat-setting-option" id="mode-24hrs" onclick="setChatDeleteMode('24hrs')">
-                <span>⏳ Delete After 24 Hours</span>
-                <span style="font-size:11px; opacity:0.7;">24h</span>
-            </button>
-            <button class="chat-setting-option" id="mode-7days" onclick="setChatDeleteMode('7days')">
-                <span>📅 Delete After 7 Days</span>
-                <span style="font-size:11px; opacity:0.7;">7d</span>
-            </button>
         </div>
 
         <!-- AR Lenses Modal -->
@@ -263,7 +227,6 @@
             <div id="song-list-container">
                 <div class="song-item" onclick="selectSong('Main Barish Ban Jaun - Jubin')"><div class="song-info"><h5>Main Barish Ban Jaun</h5><p>Jubin Nautiyal</p></div><button class="select-song-btn">Select</button></div>
                 <div class="song-item" onclick="selectSong('Hamnawa Mere - Jubin')"><div class="song-info"><h5>Hamnawa Mere</h5><p>Jubin Nautiyal</p></div><button class="select-song-btn">Select</button></div>
-                <div class="song-item" onclick="selectSong('Pehle Bhi Main - Animal')"><div class="song-info"><h5>Pehle Bhi Main</h5><p>Vishal Mishra</p></div><button class="select-song-btn">Select</button></div>
             </div>
         </div>
 
@@ -271,9 +234,7 @@
         <div id="map-screen" class="screen">
             <div class="top-bar" style="background:#0f172a;">
                 <div class="top-left-group">
-                    <div class="profile-avatar" id="map-avatar" onclick="openAvatarStudio()">
-                        <span id="map-avatar-txt">👧</span>
-                    </div>
+                    <div class="profile-avatar" onclick="openAvatarStudio()"><span>👧</span></div>
                 </div>
                 <h3>Snap Map</h3>
                 <button class="icon-btn" onclick="fetchLiveLocation()">📍</button>
@@ -282,30 +243,48 @@
                 <span style="font-size:50px;">🌍</span>
                 <h4>Live Location Sharing Active</h4>
                 <p id="location-coords-text" style="font-size: 13px; color: #94a3b8;">Fetching precise coordinates...</p>
-                <button class="login-btn" style="max-width: 220px; padding: 10px; font-size: 13px;" onclick="fetchLiveLocation()">Refresh My Location</button>
             </div>
         </div>
 
-        <!-- 2. CHAT SCREEN -->
+        <!-- 2. CHAT SCREEN (Exact Screenshot 9709.jpg Match) -->
         <div id="chat-screen" class="screen">
             <div class="chat-header">
-                <div class="chat-user-info" onclick="toggleChatSettings()">
-                    <div class="chat-avatar" id="chat-avatar-txt">👧</div>
-                    <div>
-                        <h4 style="font-size: 15px;">Jhapki Community 🔥 45</h4>
-                        <span id="chat-delete-status-label" style="font-size: 11px; color: #fffc00;">Delete after viewing 👁️</span>
-                    </div>
+                <div class="chat-user-info" onclick="alert('Profile info')">
+                    <div class="chat-partner-avatar">🧔</div>
+                    <div class="chat-partner-name">Faisu 😍 <span style="font-size:12px; color:#aaa;">›</span></div>
                 </div>
                 <div class="chat-header-actions">
-                    <button class="security-action-btn" onclick="triggerScreenshot()">📸 Snap</button>
-                    <button class="security-action-btn" onclick="triggerRecording()">🔴 Rec</button>
-                    <button class="call-btn-in-chat" onclick="startVoiceCall()">📞</button>
+                    <button class="call-icon-btn" onclick="startAudioCall()" title="Audio Call">📞</button>
+                    <button class="call-icon-btn" onclick="startVideoCall()" title="Video Call">📹</button>
+                    <button class="call-icon-btn" onclick="alert('Options')">›</button>
                 </div>
             </div>
-            <div id="chat-box"></div>
+            
+            <div id="chat-box">
+                <div class="msg incoming">
+                    <span style="font-size:10px; color:#ff8000; font-weight:bold;">FAISU 😍</span>
+                    <span>Bilkul banna hai hai</span>
+                </div>
+                <div class="msg outgoing">
+                    <span style="font-size:10px; color:#666; font-weight:bold;">ME 1:02 PM</span>
+                    <span>Papa bol rhe the bs do Saal time h</span>
+                </div>
+                <div class="msg incoming">
+                    <span style="font-size:10px; color:#ff8000; font-weight:bold;">FAISU 😍</span>
+                    <span>Amma dekh rahi hume haste huye<br>Pooch rahi aisa kya dekh rahe ho</span>
+                </div>
+            </div>
+
+            <!-- Exact Chat Input Bar -->
             <div class="chat-input-area">
-                <input type="text" id="message" placeholder="Send snap..." onkeypress="handleKey(event)">
-                <button class="send-msg-btn" onclick="sendMessage()">➤</button>
+                <button class="chat-action-icon" onclick="document.getElementById('gallery-input').click()" title="Camera">📷</button>
+                <div class="chat-input-pill">
+                    <input type="text" id="message" placeholder="Send a Chat" onkeypress="handleKey(event)">
+                </div>
+                <button class="chat-action-icon" onclick="alert('Voice note')" title="Microphone">🎤</button>
+                <button class="chat-action-icon" onclick="openAvatarStudio()" title="Bitmoji">👤</button>
+                <button class="chat-action-icon" onclick="alert('Gallery')" title="Memories">🖼️</button>
+                <button class="chat-action-icon" onclick="alert('Minis & Rockets')" title="Rockets">🚀</button>
             </div>
         </div>
 
@@ -321,13 +300,11 @@
 
             <div class="top-bar">
                 <div class="top-left-group">
-                    <div class="profile-avatar" id="cam-profile-avatar" onclick="openAvatarStudio()" title="Profiles">
-                        <span id="cam-avatar-txt">👧</span>
-                    </div>
+                    <div class="profile-avatar" onclick="openAvatarStudio()" title="Profiles"><span>👧</span></div>
                     <button class="icon-btn" onclick="openSearch()">🔍</button>
                 </div>
                 <div class="top-right-group">
-                    <button class="badge-icon" onclick="alert('68 Friend requests')">👤+ <span class="badge">68</span></button>
+                    <button class="badge-icon" onclick="alert('68 Requests')">👤+ <span class="badge">68</span></button>
                 </div>
             </div>
 
@@ -335,9 +312,9 @@
                 <button class="side-icon" id="flip-btn" onclick="flipCamera()" title="Flip">🔄</button>
                 <button class="side-icon" id="flash-btn" onclick="toggleFlash()" title="Flash">⚡</button>
                 <button class="side-icon" id="night-btn" onclick="toggleNightMode()" title="Night">🌙</button>
-                <button class="side-icon" onclick="alert('Director mode options')">🎞️</button>
+                <button class="side-icon" onclick="alert('Director mode')">🎞️</button>
                 <button class="side-icon" onclick="toggleMusicModal()" title="Add Music">🎵</button>
-                <button class="side-icon" onclick="alert('Multi-Snap layers active')">📑</button>
+                <button class="side-icon" onclick="alert('Multi-Snap')">📑</button>
             </div>
 
             <div class="camera-footer">
@@ -372,6 +349,7 @@
             </div>
         </div>
 
+        <!-- Bottom Navigation Bar -->
         <div class="bottom-nav">
             <button class="nav-item" onclick="switchTab('map', this)">📍</button>
             <button class="nav-item" onclick="switchTab('chat', this)">
@@ -415,63 +393,20 @@
                 document.getElementById('profile-display-name').innerText = `💖 ${currentUser.name} 🌹`;
                 document.getElementById('profile-display-username').innerText = `@${currentUser.username}`;
                 startCamera();
-                fetchLiveLocation();
             } else {
                 alert(data.message);
             }
         }
 
-        function openAvatarStudio() {
-            document.getElementById('avatar-studio').style.display = 'flex';
+        function openAvatarStudio() { document.getElementById('avatar-studio').style.display = 'flex'; }
+        function closeAvatarStudio(e) { document.getElementById('avatar-studio').style.display = 'none'; }
+
+        function startAudioCall() {
+            alert("📞 Audio Call Connected with Faisu 😍");
         }
 
-        function closeAvatarStudio(e) {
-            document.getElementById('avatar-studio').style.display = 'none';
-        }
-
-        function triggerScreenshot() {
-            if (!currentUser) return;
-            socket.emit('security_alert', { sender: currentUser.name, type: 'screenshot' });
-        }
-
-        function triggerRecording() {
-            if (!currentUser) return;
-            socket.emit('security_alert', { sender: currentUser.name, type: 'recording' });
-        }
-
-        socket.on('receive_security_alert', (data) => {
-            const box = document.getElementById('chat-box');
-            const alertDiv = document.createElement('div');
-            if (data.type === 'screenshot') {
-                alertDiv.className = 'system-alert-msg';
-                alertDiv.innerHTML = `📸 ${data.sender} took a screenshot of the chat!`;
-            } else {
-                alertDiv.className = 'system-alert-msg recording';
-                alertDiv.innerHTML = `🔴 ${data.sender} started screen recording!`;
-            }
-            box.appendChild(alertDiv);
-            box.scrollTop = box.scrollHeight;
-        });
-
-        function toggleChatSettings() {
-            const modal = document.getElementById('chat-settings-modal');
-            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function setChatDeleteMode(mode) {
-            document.querySelectorAll('.chat-setting-option').forEach(el => el.classList.remove('active'));
-            let labelText = 'Delete after viewing 👁️';
-            if (mode === 'viewing') {
-                document.getElementById('mode-viewing').classList.add('active');
-            } else if (mode === '24hrs') {
-                document.getElementById('mode-24hrs').classList.add('active');
-                labelText = 'Delete after 24 Hours ⏳';
-            } else if (mode === '7days') {
-                document.getElementById('mode-7days').classList.add('active');
-                labelText = 'Delete after 7 Days 📅';
-            }
-            document.getElementById('chat-delete-status-label').innerText = labelText;
-            toggleChatSettings();
+        function startVideoCall() {
+            alert("📹 Video Call Connected with Faisu 😍");
         }
 
         function toggleLenses() {
@@ -512,29 +447,9 @@
             toggleLenses();
         }
 
-        function fetchLiveLocation() {
-            const statusText = document.getElementById('location-coords-text');
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        statusText.innerText = `📍 Latitude: ${position.coords.latitude.toFixed(4)}, Longitude: ${position.coords.longitude.toFixed(4)} (India)`;
-                    },
-                    (error) => { statusText.innerText = "⚠️ Location default: Ahmedabad, India"; },
-                    { timeout: 10000 }
-                );
-            }
-        }
-
         function toggleMusicModal() {
             const modal = document.getElementById('music-modal');
             modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function filterSongs() {
-            const query = document.getElementById('song-search-input').value.toLowerCase();
-            document.querySelectorAll('.song-item').forEach(item => {
-                item.style.display = item.innerText.toLowerCase().includes(query) ? 'flex' : 'none';
-            });
         }
 
         function selectSong(songName) {
@@ -590,30 +505,20 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-            if (tabName === 'map') {
-                document.getElementById('map-screen').classList.add('active');
-                fetchLiveLocation();
-            } else if (tabName === 'chat') {
-                document.getElementById('chat-screen').classList.add('active');
-            } else if (tabName === 'camera') {
-                document.getElementById('camera-screen').classList.add('active');
-            } else if (tabName === 'stories') {
-                document.getElementById('stories-screen').classList.add('active');
-            } else if (tabName === 'spotlight') {
-                document.getElementById('spotlight-screen').classList.add('active');
-            }
+            if (tabName === 'map') document.getElementById('map-screen').classList.add('active');
+            else if (tabName === 'chat') document.getElementById('chat-screen').classList.add('active');
+            else if (tabName === 'camera') document.getElementById('camera-screen').classList.add('active');
+            else if (tabName === 'stories') document.getElementById('stories-screen').classList.add('active');
+            else if (tabName === 'spotlight') document.getElementById('spotlight-screen').classList.add('active');
+            
             if (el) el.classList.add('active');
-        }
-
-        function startVoiceCall() {
-            if (confirm("📞 Start secure call?")) alert("Calling...");
         }
 
         function sendMessage() {
             const msgInput = document.getElementById('message');
             const msg = msgInput.value.trim();
             if (!msg) return;
-            socket.emit('send_snap', { sender: currentUser.name, message: msg, avatar: '👧' });
+            socket.emit('send_snap', { sender: currentUser.name, message: msg });
             msgInput.value = '';
         }
 
@@ -627,11 +532,8 @@
             const msgElement = document.createElement('div');
             msgElement.className = `msg ${isSelf ? 'outgoing' : 'incoming'}`;
             msgElement.innerHTML = `
-                <div style="font-size:18px;">${data.avatar || '👧'}</div>
-                <div>
-                    <span style="font-size:10px; font-weight:bold; display:block; opacity:0.7;">${data.sender}</span>
-                    ${data.message}
-                </div>`;
+                <span style="font-size:10px; font-weight:bold;">${data.sender}</span>
+                <span>${data.message}</span>`;
             box.appendChild(msgElement);
             box.scrollTop = box.scrollHeight;
         });
