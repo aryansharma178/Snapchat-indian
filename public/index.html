@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jhapki - Snapchat Experience</title>
+    <title>Jhapki - Snapchat Profile UI</title>
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="/icon.svg">
     <meta name="theme-color" content="#fffc00">
@@ -20,6 +20,43 @@
         #login-screen p { color: #888; font-size: 14px; margin-bottom: 24px; }
         .input-box { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 12px; color: #fff; font-size: 15px; outline: none; margin-bottom: 14px; }
         .login-btn { width: 100%; padding: 14px; background: #fffc00; color: #000; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; }
+
+        /* Exact Snapchat Profile Bottom Sheet Modal */
+        #avatar-studio { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 110; display: none; flex-direction: column; justify-content: flex-end; backdrop-filter: blur(4px); }
+        .profile-sheet { width: 100%; max-height: 88vh; background: #f3f4f6; color: #111; border-radius: 28px 28px 0 0; padding: 14px 18px 24px 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; position: relative; animation: slideUpSheet 0.25s ease; }
+        @keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .sheet-handle { width: 40px; height: 4px; background: #d1d5db; border-radius: 2px; align-self: center; margin-bottom: 2px; }
+        .profile-hero-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; }
+        .hero-action-btn { width: 44px; height: 44px; background: rgba(0,0,0,0.35); border-radius: 50%; border: none; color: #fff; font-size: 20px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .hero-avatar-display { font-size: 85px; text-align: center; margin: -10px 0 4px 0; }
+        
+        .profile-card-main { background: #fff; border-radius: 20px; padding: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 12px; }
+        .profile-top-row { display: flex; align-items: center; gap: 14px; }
+        .snapcode-box { width: 56px; height: 56px; background: #fffc00; border-radius: 14px; display: flex; justify-content: center; align-items: center; font-size: 28px; border: 2px solid #000; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex-shrink: 0; }
+        .user-names-col h3 { font-size: 18px; font-weight: 700; color: #111; display: flex; align-items: center; gap: 6px; }
+        .user-names-col p { font-size: 13px; color: #6b7280; font-weight: 500; }
+        
+        .badges-row { display: flex; gap: 8px; }
+        .profile-pill-badge { background: #f3f4f6; padding: 5px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; color: #374151; display: flex; align-items: center; gap: 6px; border: 1px solid #e5e7eb; }
+        
+        .email-verify-box { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .email-verify-info { display: flex; align-items: center; gap: 12px; }
+        .email-icon { font-size: 20px; }
+        .email-verify-info h5 { font-size: 14px; font-weight: 700; color: #111; }
+        .email-verify-info p { font-size: 11px; color: #6b7280; }
+        .close-email-btn { background: none; border: none; font-size: 16px; color: #9ca3af; cursor: pointer; }
+
+        .stories-section-header { display: flex; justify-content: space-between; align-items: center; }
+        .stories-section-header h4 { font-size: 16px; font-weight: 700; color: #111; }
+        .private-story-pill { background: #e5e7eb; border: none; padding: 6px 14px; border-radius: 16px; font-size: 12px; font-weight: 600; color: #374151; cursor: pointer; }
+        
+        .stories-tray { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+        .my-story-tile { width: 110px; height: 165px; background: #111; border-radius: 16px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .story-views-pill { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 2px 8px; border-radius: 10px; font-size: 10px; color: #fff; width: fit-content; display: flex; align-items: center; gap: 4px; }
+        .add-snap-tile { width: 110px; height: 165px; background: #fff; border: 2px dashed #cbd5e1; border-radius: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 6px; cursor: pointer; flex-shrink: 0; }
+        .add-snap-tile span { font-size: 28px; }
+        .add-snap-tile p { font-size: 12px; font-weight: 600; color: #4b5563; }
 
         /* Chat Settings Modal */
         #chat-settings-modal { position: absolute; bottom: 0; left: 0; width: 100%; background: #1c1c1e; border-radius: 24px 24px 0 0; padding: 20px; z-index: 130; display: none; border-top: 1px solid #333; }
@@ -40,30 +77,6 @@
         .song-info h5 { font-size: 13px; color: #fff; }
         .song-info p { font-size: 11px; color: #888; }
         .select-song-btn { background: #fffc00; color: #000; font-size: 11px; font-weight: bold; padding: 5px 10px; border-radius: 6px; border: none; }
-
-        /* Dual Profile Studio Modal */
-        #avatar-studio { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 110; display: none; flex-direction: column; padding: 16px; overflow-y: auto; }
-        .studio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .studio-header h3 { color: #fffc00; font-size: 18px; }
-        .close-studio { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; }
-        
-        .profile-mode-switcher { display: flex; background: #1a1a1a; padding: 4px; border-radius: 12px; margin-bottom: 14px; border: 1px solid #333; }
-        .mode-btn { flex: 1; padding: 10px; background: transparent; border: none; color: #aaa; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 10px; text-align: center; }
-        .mode-btn.active { background: #fffc00; color: #000; }
-
-        .profile-preview-card { width: 100%; height: 150px; background: linear-gradient(135deg, #2b1055, #7597de); border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; margin-bottom: 14px; border: 2px solid #fffc00; box-shadow: 0 10px 25px rgba(255,252,0,0.2); overflow: hidden; }
-        .profile-dp-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #fffc00; display: none; }
-        .avatar-display-large { font-size: 60px; }
-        .profile-tagline { font-size: 12px; color: #fffc00; font-weight: bold; margin-top: 6px; background: rgba(0,0,0,0.6); padding: 4px 12px; border-radius: 12px; }
-
-        .profile-section { display: none; }
-        .profile-section.active-section { display: block; }
-        .customizer-section { margin-bottom: 14px; }
-        .customizer-section label { font-size: 12px; color: #fffc00; display: block; margin-bottom: 6px; font-weight: bold; }
-        .option-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-        .option-btn { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 9px; border-radius: 8px; font-size: 11px; cursor: pointer; text-align: center; }
-        .option-btn.selected { background: #fffc00; color: #000; font-weight: bold; border-color: #fffc00; }
-        .save-avatar-btn { width: 100%; padding: 13px; background: #fffc00; color: #000; font-weight: 700; border: none; border-radius: 12px; margin-top: 10px; cursor: pointer; font-size: 14px; }
 
         /* Screens */
         .screen { flex: 1; display: flex; flex-direction: column; position: relative; display: none; }
@@ -140,14 +153,71 @@
     <div class="app-container">
         <div id="flash-overlay"></div>
 
+        <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
-            <p>Snapchat Experience with Custom App Icon</p>
+            <p>Snapchat Experience</p>
             <input type="text" id="name" class="input-box" placeholder="Your Name">
             <input type="text" id="username" class="input-box" placeholder="Username">
             <button class="login-btn" onclick="login()">Enter Jhapki</button>
         </div>
 
+        <!-- Exact Snapchat Profile Bottom Sheet Modal -->
+        <div id="avatar-studio" onclick="closeAvatarStudio(event)">
+            <div class="profile-sheet" onclick="event.stopPropagation()">
+                <div class="sheet-handle"></div>
+                
+                <div class="profile-hero-header">
+                    <button class="hero-action-btn" onclick="alert('👕 Avatar Studio & Wardrobe')">👔</button>
+                    <div class="hero-avatar-display" id="sheet-avatar-icon">👩‍🦰✨</div>
+                    <button class="hero-action-btn" onclick="alert('🖼️ Memories & Gallery')">🖼️</button>
+                </div>
+
+                <div class="profile-card-main">
+                    <div class="profile-top-row">
+                        <div class="snapcode-box">👻</div>
+                        <div class="user-names-col">
+                            <h3 id="profile-display-name">💖 Niki 🌹</h3>
+                            <p id="profile-display-username">@niku2969</p>
+                        </div>
+                    </div>
+
+                    <div class="badges-row">
+                        <div class="profile-pill-badge">👻 126,676</div>
+                        <div class="profile-pill-badge">♋ Cancer</div>
+                    </div>
+                </div>
+
+                <div class="email-verify-box" id="email-box">
+                    <div class="email-verify-info">
+                        <span class="email-icon">✉️</span>
+                        <div>
+                            <h5>Verify your email</h5>
+                            <p>Tap to help secure your account</p>
+                        </div>
+                    </div>
+                    <button class="close-email-btn" onclick="document.getElementById('email-box').style.display='none'">✕</button>
+                </div>
+
+                <div class="stories-section-header">
+                    <h4>My Stories</h4>
+                    <button class="private-story-pill">+ Private Story</button>
+                </div>
+
+                <div class="stories-tray">
+                    <div class="my-story-tile" style="background: linear-gradient(135deg, #444, #111);">
+                        <div class="story-views-pill">👁️ 50</div>
+                        <div style="font-size:11px; color:#fff; font-weight:600;">My Story</div>
+                    </div>
+                    <div class="add-snap-tile" onclick="switchTab('camera'); closeAvatarStudio();">
+                        <span>📷</span>
+                        <p>Add Snap</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Settings Modal -->
         <div id="chat-settings-modal">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
                 <h4 style="color:#fffc00; font-size:16px;">⏱️ Delete Chats</h4>
@@ -167,6 +237,7 @@
             </button>
         </div>
 
+        <!-- AR Lenses Modal -->
         <div id="lenses-modal">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎭 Snapchat AR Lenses</span>
@@ -182,6 +253,7 @@
             </div>
         </div>
 
+        <!-- Music Search Modal -->
         <div id="music-modal">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
                 <span style="font-size:13px; color:#fffc00; font-weight:bold;">🎵 Search Song for Story</span>
@@ -195,63 +267,12 @@
             </div>
         </div>
 
-        <div id="avatar-studio">
-            <div class="studio-header">
-                <h3>👥 Jhapki Profiles</h3>
-                <button class="close-studio" onclick="closeAvatarStudio()">✕ Close</button>
-            </div>
-            
-            <div class="profile-mode-switcher">
-                <button class="mode-btn active" id="btn-mode-local" onclick="switchProfileMode('local')">👻 Local Bitmoji</button>
-                <button class="mode-btn" id="btn-mode-public" onclick="switchProfileMode('public')">🌐 Public Profile</button>
-            </div>
-
-            <div class="profile-preview-card" id="profile-preview-bg">
-                <img id="public-dp-preview" class="profile-dp-img" src="" alt="Public DP">
-                <div class="avatar-display-large" id="avatar-display-icon">👦</div>
-                <div class="profile-tagline" id="profile-summary-tag">Local Chat & Snap Map</div>
-            </div>
-
-            <div id="section-local-profile" class="profile-section active-section">
-                <div class="customizer-section">
-                    <label>Select Bitmoji Gender & Style</label>
-                    <div class="option-grid">
-                        <button class="option-btn selected" onclick="setBitmojiOption('gender', 'boy', '👦 Party Boy', this)">👦 Party Boy</button>
-                        <button class="option-btn" onclick="setBitmojiOption('gender', 'girl', '👧 Party Girl', this)">👧 Party Girl</button>
-                        <button class="option-btn" onclick="setBitmojiOption('gender', 'cool', '😎 Cool Vibe', this)">😎 Cool Vibe</button>
-                    </div>
-                </div>
-
-                <div class="customizer-section">
-                    <label>Bitmoji Outfit</label>
-                    <div class="option-grid">
-                        <button class="option-btn selected" onclick="setBitmojiOption('outfit', 'party', 'Party Wear', this)">✨ Party</button>
-                        <button class="option-btn" onclick="setBitmojiOption('outfit', 'casual', 'Casual Street', this)">👕 Casual</button>
-                        <button class="option-btn" onclick="setBitmojiOption('outfit', 'royal', 'Royal Gold', this)">👑 Royal</button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="section-public-profile" class="profile-section">
-                <div class="customizer-section">
-                    <label>Upload Real Creator Photo (DP)</label>
-                    <input type="file" id="public-photo-input" accept="image/*" class="input-box" onchange="uploadPublicPhoto(event)">
-                </div>
-                <div class="customizer-section">
-                    <label>Public Story Feed</label>
-                    <button class="option-btn selected" style="width:100%; padding:12px;" onclick="alert('🌐 Public Profile & Story published to feed!')">Publish Public Story</button>
-                </div>
-            </div>
-
-            <button class="save-avatar-btn" onclick="saveProfiles()">Save Profile Changes</button>
-        </div>
-
+        <!-- 1. MAP SCREEN -->
         <div id="map-screen" class="screen">
             <div class="top-bar" style="background:#0f172a;">
                 <div class="top-left-group">
                     <div class="profile-avatar" id="map-avatar" onclick="openAvatarStudio()">
-                        <img id="map-avatar-img" src="">
-                        <span id="map-avatar-txt">👦</span>
+                        <span id="map-avatar-txt">👧</span>
                     </div>
                 </div>
                 <h3>Snap Map</h3>
@@ -265,13 +286,11 @@
             </div>
         </div>
 
+        <!-- 2. CHAT SCREEN -->
         <div id="chat-screen" class="screen">
             <div class="chat-header">
                 <div class="chat-user-info" onclick="toggleChatSettings()">
-                    <div class="chat-avatar" id="chat-avatar-box">
-                        <img id="chat-avatar-img" src="">
-                        <span id="chat-avatar-txt">👦</span>
-                    </div>
+                    <div class="chat-avatar" id="chat-avatar-txt">👧</div>
                     <div>
                         <h4 style="font-size: 15px;">Jhapki Community 🔥 45</h4>
                         <span id="chat-delete-status-label" style="font-size: 11px; color: #fffc00;">Delete after viewing 👁️</span>
@@ -290,6 +309,7 @@
             </div>
         </div>
 
+        <!-- 3. CAMERA SCREEN -->
         <div id="camera-screen" class="screen active">
             <video id="webcam-video" autoplay playsinline></video>
             
@@ -302,8 +322,7 @@
             <div class="top-bar">
                 <div class="top-left-group">
                     <div class="profile-avatar" id="cam-profile-avatar" onclick="openAvatarStudio()" title="Profiles">
-                        <img id="cam-avatar-img" src="">
-                        <span id="cam-avatar-txt">👦</span>
+                        <span id="cam-avatar-txt">👧</span>
                     </div>
                     <button class="icon-btn" onclick="openSearch()">🔍</button>
                 </div>
@@ -329,6 +348,7 @@
             </div>
         </div>
 
+        <!-- 4. STORIES SCREEN -->
         <div id="stories-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
                 <h3>Stories & Public Feed</h3>
@@ -340,6 +360,7 @@
             </div>
         </div>
 
+        <!-- 5. SPOTLIGHT SCREEN -->
         <div id="spotlight-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
                 <h3>Spotlight</h3>
@@ -375,19 +396,6 @@
         let useFrontCamera = true;
         let mediaStream = null;
 
-        let activeProfileMode = 'local';
-        let publicDpUrl = null;
-        let selectedSong = null;
-        let currentActiveLens = 'Normal';
-        let chatDeleteMode = 'viewing';
-
-        let bitmoji = {
-            gender: 'boy',
-            genderText: 'Party Boy',
-            outfit: 'party',
-            outfitText: 'Party Wear'
-        };
-
         async function login() {
             const name = document.getElementById('name').value.trim();
             const username = document.getElementById('username').value.trim();
@@ -404,12 +412,21 @@
             if (data.success) {
                 currentUser = data.user;
                 document.getElementById('login-screen').style.display = 'none';
-                updateGlobalDisplay();
+                document.getElementById('profile-display-name').innerText = `💖 ${currentUser.name} 🌹`;
+                document.getElementById('profile-display-username').innerText = `@${currentUser.username}`;
                 startCamera();
                 fetchLiveLocation();
             } else {
                 alert(data.message);
             }
+        }
+
+        function openAvatarStudio() {
+            document.getElementById('avatar-studio').style.display = 'flex';
+        }
+
+        function closeAvatarStudio(e) {
+            document.getElementById('avatar-studio').style.display = 'none';
         }
 
         function triggerScreenshot() {
@@ -422,16 +439,9 @@
             socket.emit('security_alert', { sender: currentUser.name, type: 'recording' });
         }
 
-        window.addEventListener('keyup', (e) => {
-            if (e.key === 'PrintScreen' && currentUser) {
-                socket.emit('security_alert', { sender: currentUser.name, type: 'screenshot' });
-            }
-        });
-
         socket.on('receive_security_alert', (data) => {
             const box = document.getElementById('chat-box');
             const alertDiv = document.createElement('div');
-            
             if (data.type === 'screenshot') {
                 alertDiv.className = 'system-alert-msg';
                 alertDiv.innerHTML = `📸 ${data.sender} took a screenshot of the chat!`;
@@ -439,7 +449,6 @@
                 alertDiv.className = 'system-alert-msg recording';
                 alertDiv.innerHTML = `🔴 ${data.sender} started screen recording!`;
             }
-            
             box.appendChild(alertDiv);
             box.scrollTop = box.scrollHeight;
         });
@@ -450,12 +459,10 @@
         }
 
         function setChatDeleteMode(mode) {
-            chatDeleteMode = mode;
             document.querySelectorAll('.chat-setting-option').forEach(el => el.classList.remove('active'));
             let labelText = 'Delete after viewing 👁️';
             if (mode === 'viewing') {
                 document.getElementById('mode-viewing').classList.add('active');
-                labelText = 'Delete after viewing 👁️';
             } else if (mode === '24hrs') {
                 document.getElementById('mode-24hrs').classList.add('active');
                 labelText = 'Delete after 24 Hours ⏳';
@@ -475,8 +482,6 @@
         function selectLens(type, lensName, btn) {
             document.querySelectorAll('.lens-item').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            currentActiveLens = lensName;
-
             const iconDisplay = document.getElementById('lens-icon-display');
             const video = document.getElementById('webcam-video');
 
@@ -533,93 +538,9 @@
         }
 
         function selectSong(songName) {
-            selectedSong = songName;
             document.getElementById('current-song-label').innerText = songName;
             document.getElementById('active-song-sticker').style.display = 'flex';
             toggleMusicModal();
-        }
-
-        function openAvatarStudio() {
-            document.getElementById('avatar-studio').style.display = 'flex';
-            updatePreviewUI();
-        }
-
-        function closeAvatarStudio() {
-            document.getElementById('avatar-studio').style.display = 'none';
-        }
-
-        function switchProfileMode(mode) {
-            activeProfileMode = mode;
-            document.getElementById('btn-mode-local').classList.toggle('active', mode === 'local');
-            document.getElementById('btn-mode-public').classList.toggle('active', mode === 'public');
-            document.getElementById('section-local-profile').classList.toggle('active-section', mode === 'local');
-            document.getElementById('section-public-profile').classList.toggle('active-section', mode === 'public');
-            updatePreviewUI();
-        }
-
-        function setBitmojiOption(category, value, text, btn) {
-            bitmoji[category] = value;
-            bitmoji[category + 'Text'] = text;
-            btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            updatePreviewUI();
-        }
-
-        function uploadPublicPhoto(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    publicDpUrl = e.target.result;
-                    updatePreviewUI();
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function updatePreviewUI() {
-            const dpImg = document.getElementById('public-dp-preview');
-            const bitmojiIcon = document.getElementById('avatar-display-icon');
-            const summaryTag = document.getElementById('profile-summary-tag');
-
-            if (activeProfileMode === 'public' && publicDpUrl) {
-                dpImg.src = publicDpUrl;
-                dpImg.style.display = 'block';
-                bitmojiIcon.style.display = 'none';
-                summaryTag.innerText = "🌐 Public Creator Profile";
-            } else {
-                dpImg.style.display = 'none';
-                bitmojiIcon.style.display = 'block';
-                let icon = '👦';
-                if (bitmoji.gender === 'girl') icon = '👧';
-                if (bitmoji.gender === 'cool') icon = '😎';
-                bitmojiIcon.innerText = icon;
-                summaryTag.innerText = `👻 Local Bitmoji (${bitmoji.genderText})`;
-            }
-        }
-
-        function saveProfiles() {
-            updateGlobalDisplay();
-            closeAvatarStudio();
-        }
-
-        function updateGlobalDisplay() {
-            ['map', 'chat', 'cam'].forEach(prefix => {
-                const imgEl = document.getElementById(`${prefix}-avatar-img`);
-                const txtEl = document.getElementById(`${prefix}-avatar-txt`);
-                if (activeProfileMode === 'public' && publicDpUrl) {
-                    imgEl.src = publicDpUrl;
-                    imgEl.style.display = 'block';
-                    txtEl.style.display = 'none';
-                } else {
-                    imgEl.style.display = 'none';
-                    txtEl.style.display = 'block';
-                    let icon = '👦';
-                    if (bitmoji.gender === 'girl') icon = '👧';
-                    if (bitmoji.gender === 'cool') icon = '😎';
-                    txtEl.innerText = icon;
-                }
-            });
         }
 
         async function startCamera() {
@@ -653,7 +574,7 @@
             const flash = document.getElementById('flash-overlay');
             flash.style.opacity = '1';
             setTimeout(() => { flash.style.opacity = '0'; }, 200);
-            alert(`📸 Snap Captured with ${currentActiveLens} Lens!`);
+            alert("📸 Snap Captured Successfully!");
         }
 
         function previewGallery(event) {
@@ -692,13 +613,7 @@
             const msgInput = document.getElementById('message');
             const msg = msgInput.value.trim();
             if (!msg) return;
-            const avatarText = activeProfileMode === 'local' ? document.getElementById('cam-avatar-txt').innerText : '🌐';
-            
-            let timerLabel = '👁️ Delete after viewing';
-            if (chatDeleteMode === '24hrs') timerLabel = '⏳ Expires in 24 hrs';
-            if (chatDeleteMode === '7days') timerLabel = '📅 Expires in 7 days';
-
-            socket.emit('send_snap', { sender: currentUser.name, message: msg, avatar: avatarText, timer: timerLabel });
+            socket.emit('send_snap', { sender: currentUser.name, message: msg, avatar: '👧' });
             msgInput.value = '';
         }
 
@@ -712,23 +627,11 @@
             const msgElement = document.createElement('div');
             msgElement.className = `msg ${isSelf ? 'outgoing' : 'incoming'}`;
             msgElement.innerHTML = `
-                <div style="font-size:18px;">${data.avatar || '👦'}</div>
+                <div style="font-size:18px;">${data.avatar || '👧'}</div>
                 <div>
                     <span style="font-size:10px; font-weight:bold; display:block; opacity:0.7;">${data.sender}</span>
                     ${data.message}
-                    <span class="msg-timer">${data.timer || '👁️ Delete after viewing'}</span>
                 </div>`;
-
-            if (chatDeleteMode === 'viewing') {
-                msgElement.onclick = function() {
-                    if (confirm("👁️ Open and view snap? It will disappear after viewing!")) {
-                        msgElement.style.opacity = '0.3';
-                        msgElement.innerHTML = `<div style="font-size:12px; font-style:italic; color:#aaa;">Opened / Viewed 👻</div>`;
-                        setTimeout(() => msgElement.remove(), 1500);
-                    }
-                };
-            }
-
             box.appendChild(msgElement);
             box.scrollTop = box.scrollHeight;
         });
