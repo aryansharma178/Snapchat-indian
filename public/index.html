@@ -34,6 +34,26 @@
         .option-btn.selected { background: #fffc00; color: #000; font-weight: bold; border-color: #fffc00; }
         .save-avatar-btn { width: 100%; padding: 14px; background: #fffc00; color: #000; font-weight: 700; border: none; border-radius: 12px; margin-top: 15px; cursor: pointer; font-size: 15px; }
 
+        /* Friends & Social Management Modal */
+        #friends-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 120; display: none; flex-direction: column; padding: 20px; overflow-y: auto; }
+        .friends-tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px; }
+        .friend-tab-btn { background: #222; border: 1px solid #444; color: #aaa; padding: 8px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .friend-tab-btn.active { background: #fffc00; color: #000; font-weight: bold; border-color: #fffc00; }
+        
+        .friend-list-container { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+        .friend-card { background: #1a1a1a; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #2a2a2a; }
+        .friend-info { display: flex; align-items: center; gap: 10px; }
+        .friend-avatar-circle { width: 38px; height: 38px; background: #333; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; border: 1px solid #fffc00; }
+        .friend-actions { display: flex; gap: 6px; }
+        .action-btn-sm { padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; border: none; cursor: pointer; }
+        .btn-accept { background: #22c55e; color: #fff; }
+        .btn-reject { background: #ef4444; color: #fff; }
+        .btn-remove { background: #333; color: #ff5252; }
+        .btn-block { background: #b91c1c; color: #fff; }
+        .btn-report { background: #555; color: #fff; }
+
+        .add-friend-box { background: #1a1a1a; padding: 16px; border-radius: 12px; margin-bottom: 16px; }
+
         /* Screens */
         .screen { flex: 1; display: flex; flex-direction: column; position: relative; display: none; }
         .screen.active { display: flex; }
@@ -96,7 +116,6 @@
     <div class="app-container">
         <div id="flash-overlay"></div>
 
-        <!-- Login Screen -->
         <div id="login-screen">
             <h2>👻 Jhapki</h2>
             <p>Enter your profile details</p>
@@ -105,7 +124,6 @@
             <button class="login-btn" onclick="login()">Continue</button>
         </div>
 
-        <!-- Avatar Studio Modal / Screen -->
         <div id="avatar-studio">
             <div class="studio-header">
                 <h3>Jhapki Avatar Studio</h3>
@@ -147,7 +165,82 @@
             <button class="save-avatar-btn" onclick="saveAvatar()">Save & Apply Avatar</button>
         </div>
 
-        <!-- 1. MAP SCREEN -->
+        <div id="friends-modal">
+            <div class="studio-header">
+                <h3>👥 Friends & Management</h3>
+                <button class="close-studio" onclick="closeFriendsModal()">✕ Close</button>
+            </div>
+
+            <div class="friends-tabs">
+                <button class="friend-tab-btn active" onclick="switchFriendTab('requests', this)">📥 Requests (<span id="req-count">2</span>)</button>
+                <button class="friend-tab-btn" onclick="switchFriendTab('myfriends', this)">🤝 My Friends</button>
+                <button class="friend-tab-btn" onclick="switchFriendTab('add', this)">➕ Add Friend</button>
+                <button class="friend-tab-btn" onclick="switchFriendTab('blocked', this)">🚫 Blocked</button>
+            </div>
+
+            <div id="tab-requests" class="friend-list-container" style="display: flex;">
+                <div class="friend-card" id="req-1">
+                    <div class="friend-info">
+                        <div class="friend-avatar-circle">👧</div>
+                        <div>
+                            <h4>Priya Sharma</h4>
+                            <span style="font-size:11px; color:#888;">@priya_17</span>
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="action-btn-sm btn-accept" onclick="acceptRequest('req-1', 'Priya Sharma')">Accept</button>
+                        <button class="action-btn-sm btn-reject" onclick="rejectRequest('req-1')">Decline</button>
+                    </div>
+                </div>
+                <div class="friend-card" id="req-2">
+                    <div class="friend-info">
+                        <div class="friend-avatar-circle">😎</div>
+                        <div>
+                            <h4>Rahul Verma</h4>
+                            <span style="font-size:11px; color:#888;">@rahul_v</span>
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="action-btn-sm btn-accept" onclick="acceptRequest('req-2', 'Rahul Verma')">Accept</button>
+                        <button class="action-btn-sm btn-reject" onclick="rejectRequest('req-2')">Decline</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-myfriends" class="friend-list-container" style="display: none;">
+                <div id="my-friends-list">
+                    <div class="friend-card" id="friend-aman">
+                        <div class="friend-info">
+                            <div class="friend-avatar-circle">👦</div>
+                            <div>
+                                <h4>Aman Singh</h4>
+                                <span style="font-size:11px; color:#22c55e;">Online</span>
+                            </div>
+                        </div>
+                        <div class="friend-actions">
+                            <button class="action-btn-sm btn-remove" onclick="removeFriend('friend-aman', 'Aman Singh')">Remove</button>
+                            <button class="action-btn-sm btn-block" onclick="blockUser('friend-aman', 'Aman Singh')">Block</button>
+                            <button class="action-btn-sm btn-report" onclick="reportUser('Aman Singh')">Report</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-add" class="friend-list-container" style="display: none;">
+                <div class="add-friend-box">
+                    <label style="font-size:13px; color:#aaa; margin-bottom:8px; display:block;">Search by Jhapki Username</label>
+                    <input type="text" id="add-username-input" class="input-box" placeholder="e.g. @username" style="margin-bottom:10px;">
+                    <button class="login-btn" onclick="sendFriendRequest()">Send Friend Request</button>
+                </div>
+            </div>
+
+            <div id="tab-blocked" class="friend-list-container" style="display: none;">
+                <div id="blocked-list-box" style="color:#777; font-size:13px; text-align:center; padding:20px;">
+                    No users blocked yet.
+                </div>
+            </div>
+        </div>
+
         <div id="map-screen" class="screen">
             <div class="top-bar" style="background:#0f172a;">
                 <div class="profile-avatar" id="map-avatar" onclick="openAvatarStudio()">👦</div>
@@ -160,7 +253,6 @@
             </div>
         </div>
 
-        <!-- 2. CHAT CONVERSATION SCREEN -->
         <div id="chat-screen" class="screen">
             <div class="chat-header">
                 <div class="chat-user-info">
@@ -179,7 +271,6 @@
             </div>
         </div>
 
-        <!-- 3. CAMERA SCREEN -->
         <div id="camera-screen" class="screen active">
             <video id="webcam-video" autoplay playsinline></video>
             
@@ -189,11 +280,10 @@
                     <button class="icon-btn" onclick="openSearch()">🔍</button>
                 </div>
                 <div class="top-right-icons">
-                    <button class="badge-icon" onclick="openAddFriends()">👤+ <span class="badge">68</span></button>
+                    <button class="badge-icon" onclick="openFriendsModal()">👤+ <span class="badge" id="req-badge">2</span></button>
                 </div>
             </div>
 
-            <!-- Right Sidebar Active Tools -->
             <div class="right-sidebar">
                 <button class="side-icon" id="flip-btn" onclick="flipCamera()" title="Flip Camera">🔄</button>
                 <button class="side-icon" id="flash-btn" onclick="toggleFlash()" title="Flash">⚡</button>
@@ -203,7 +293,6 @@
                 <button class="side-icon" onclick="alert('Director mode options')">📑</button>
             </div>
 
-            <!-- Camera Shutter Footer -->
             <div class="camera-footer">
                 <input type="file" id="gallery-input" style="display:none" accept="image/*" onchange="previewGallery(event)">
                 <div class="gallery-preview" onclick="document.getElementById('gallery-input').click()" title="Open Gallery">🖼️</div>
@@ -212,7 +301,6 @@
             </div>
         </div>
 
-        <!-- 4. STORIES SCREEN -->
         <div id="stories-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
                 <h3>Stories & Friends</h3>
@@ -224,7 +312,6 @@
             </div>
         </div>
 
-        <!-- 5. SPOTLIGHT SCREEN -->
         <div id="spotlight-screen" class="screen">
             <div class="top-bar" style="background:#181818;">
                 <h3>Spotlight</h3>
@@ -236,7 +323,6 @@
             </div>
         </div>
 
-        <!-- Bottom Navigation Bar -->
         <div class="bottom-nav">
             <button class="nav-item" onclick="switchTab('map', this)">📍</button>
             <button class="nav-item" onclick="switchTab('chat', this)">
@@ -261,7 +347,6 @@
         let useFrontCamera = true;
         let mediaStream = null;
 
-        // Avatar Customization State with Background and Position
         let currentAvatar = {
             gender: 'boy',
             bg: 'neon',
@@ -300,12 +385,115 @@
             document.getElementById('avatar-studio').style.display = 'none';
         }
 
+        function openFriendsModal() {
+            document.getElementById('friends-modal').style.display = 'flex';
+        }
+
+        function closeFriendsModal() {
+            document.getElementById('friends-modal').style.display = 'none';
+        }
+
+        function switchFriendTab(tab, btn) {
+            document.querySelectorAll('.friend-tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.getElementById('tab-requests').style.display = tab === 'requests' ? 'flex' : 'none';
+            document.getElementById('tab-myfriends').style.display = tab === 'myfriends' ? 'flex' : 'none';
+            document.getElementById('tab-add').style.display = tab === 'add' ? 'flex' : 'none';
+            document.getElementById('tab-blocked').style.display = tab === 'blocked' ? 'flex' : 'none';
+        }
+
+        function acceptRequest(reqId, name) {
+            document.getElementById(reqId).remove();
+            updateReqCount(-1);
+            
+            const myFriendsList = document.getElementById('my-friends-list');
+            const friendId = 'friend_' + Date.now();
+            myFriendsList.innerHTML += `
+                <div class="friend-card" id="${friendId}">
+                    <div class="friend-info">
+                        <div class="friend-avatar-circle">✨</div>
+                        <div>
+                            <h4>${name}</h4>
+                            <span style="font-size:11px; color:#22c55e;">New Friend</span>
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="action-btn-sm btn-remove" onclick="removeFriend('${friendId}', '${name}')">Remove</button>
+                        <button class="action-btn-sm btn-block" onclick="blockUser('${friendId}', '${name}')">Block</button>
+                        <button class="action-btn-sm btn-report" onclick="reportUser('${name}')">Report</button>
+                    </div>
+                </div>`;
+            alert(`✨ Friend request accepted for ${name}!`);
+        }
+
+        function rejectRequest(reqId) {
+            document.getElementById(reqId).remove();
+            updateReqCount(-1);
+            alert("Friend request declined.");
+        }
+
+        function updateReqCount(change) {
+            const reqBadge = document.getElementById('req-badge');
+            const reqCount = document.getElementById('req-count');
+            let current = parseInt(reqBadge.innerText) + change;
+            if (current < 0) current = 0;
+            reqBadge.innerText = current;
+            reqCount.innerText = current;
+        }
+
+        function removeFriend(friendId, name) {
+            if (confirm(`Are you sure you want to remove ${name} from friends?`)) {
+                document.getElementById(friendId).remove();
+                alert(`${name} has been removed from your friends.`);
+            }
+        }
+
+        function blockUser(friendId, name) {
+            if (confirm(`Block ${name}? They won't be able to send you snaps or messages.`)) {
+                document.getElementById(friendId).remove();
+                
+                const blockedBox = document.getElementById('blocked-list-box');
+                if (blockedBox.innerText.includes('No users blocked yet')) {
+                    blockedBox.innerHTML = '';
+                }
+                blockedBox.innerHTML += `
+                    <div class="friend-card">
+                        <div class="friend-info">
+                            <div class="friend-avatar-circle">🚫</div>
+                            <div>
+                                <h4>${name}</h4>
+                                <span style="font-size:11px; color:#ef4444;">Blocked</span>
+                            </div>
+                        </div>
+                        <button class="action-btn-sm btn-accept" onclick="alert('User Unblocked!')">Unblock</button>
+                    </div>`;
+                alert(`🚫 ${name} has been blocked.`);
+            }
+        }
+
+        function reportUser(name) {
+            let reason = prompt(`Report ${name}. Please select reason:\n1. Spam / Fake\n2. Harassment\n3. Inappropriate Content`);
+            if (reason) {
+                alert(`⚠️ Report submitted successfully against ${name}. Our safety team will review it.`);
+            }
+        }
+
+        function sendFriendRequest() {
+            const val = document.getElementById('add-username-input').value.trim();
+            if (!val) {
+                alert('Please enter a valid username');
+                return;
+            }
+            alert(`📤 Friend request successfully sent to ${val}!`);
+            document.getElementById('add-username-input').value = '';
+        }
+
         function setAvatarOption(category, value, btn) {
             currentAvatar[category] = value;
             const parent = btn.parentElement;
             parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
-
             updatePreviewStyle();
         }
 
@@ -316,33 +504,21 @@
             document.getElementById('avatar-preview-icon').innerText = icon;
 
             const box = document.getElementById('avatar-preview-box');
-            
-            // Background Themes
-            if (currentAvatar.bg === 'neon') {
-                box.style.background = 'linear-gradient(135deg, #ff007f, #7928ca)';
-            } else if (currentAvatar.bg === 'sunset') {
-                box.style.background = 'linear-gradient(135deg, #ff8008, #ffc837)';
-            } else if (currentAvatar.bg === 'royal') {
-                box.style.background = 'linear-gradient(135deg, #111111, #433800)';
-            } else if (currentAvatar.bg === 'cyber') {
-                box.style.background = 'linear-gradient(135deg, #00f2fe, #4facfe)';
-            }
+            if (currentAvatar.bg === 'neon') box.style.background = 'linear-gradient(135deg, #ff007f, #7928ca)';
+            else if (currentAvatar.bg === 'sunset') box.style.background = 'linear-gradient(135deg, #ff8008, #ffc837)';
+            else if (currentAvatar.bg === 'royal') box.style.background = 'linear-gradient(135deg, #111111, #433800)';
+            else if (currentAvatar.bg === 'cyber') box.style.background = 'linear-gradient(135deg, #00f2fe, #4facfe)';
 
-            // Position & Scale
             const iconSpan = document.getElementById('avatar-preview-icon');
-            if (currentAvatar.pos === 'center') {
-                iconSpan.style.transform = 'scale(1) translateY(0)';
-            } else if (currentAvatar.pos === 'bounce') {
-                iconSpan.style.transform = 'scale(1.1) translateY(-5px)';
-            } else if (currentAvatar.pos === 'zoomed') {
-                iconSpan.style.transform = 'scale(1.3) translateY(0)';
-            }
+            if (currentAvatar.pos === 'center') iconSpan.style.transform = 'scale(1) translateY(0)';
+            else if (currentAvatar.pos === 'bounce') iconSpan.style.transform = 'scale(1.1) translateY(-5px)';
+            else if (currentAvatar.pos === 'zoomed') iconSpan.style.transform = 'scale(1.3) translateY(0)';
         }
 
         function saveAvatar() {
             updateAvatarDisplay();
             closeAvatarStudio();
-            alert("✨ Jhapki Avatar with Background & Position successfully saved!");
+            alert("✨ Jhapki Avatar successfully saved!");
         }
 
         function updateAvatarDisplay() {
@@ -355,21 +531,13 @@
             document.getElementById('chat-avatar-text').innerText = icon;
         }
 
-        // Start Live Webcam
         async function startCamera() {
             try {
-                if (mediaStream) {
-                    mediaStream.getTracks().forEach(track => track.stop());
-                }
-                const constraints = {
-                    video: { facingMode: useFrontCamera ? 'user' : 'environment' },
-                    audio: false
-                };
+                if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+                const constraints = { video: { facingMode: useFrontCamera ? 'user' : 'environment' }, audio: false };
                 mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
                 document.getElementById('webcam-video').srcObject = mediaStream;
-            } catch (err) {
-                console.log("Camera access error:", err);
-            }
+            } catch (err) { console.log("Camera access error:", err); }
         }
 
         function flipCamera() {
@@ -404,18 +572,12 @@
 
         function previewGallery(event) {
             const file = event.target.files[0];
-            if (file) {
-                alert("🖼️ Gallery image selected: " + file.name);
-            }
+            if (file) alert("🖼️ Gallery image selected: " + file.name);
         }
 
         function openSearch() {
             let query = prompt("Search users or stories:");
             if (query) alert("Searching for: " + query);
-        }
-
-        function openAddFriends() {
-            alert("👥 68 Friend Requests / Suggestions loaded!");
         }
 
         function switchTab(tabName, el) {
@@ -433,9 +595,7 @@
 
         function startVoiceCall() {
             let confirmCall = confirm("📞 Do you want to start a secure voice call in this chat?");
-            if (confirmCall) {
-                alert("Calling... Connected with community peer!");
-            }
+            if (confirmCall) alert("Calling... Connected with community peer!");
         }
 
         function sendMessage() {
@@ -457,11 +617,11 @@
             const avtr = data.avatar || '👦';
             
             box.innerHTML += `
-                <div class="msg \${bubbleClass}">
-                    <div style="font-size:18px;">\${avtr}</div>
+                <div class="msg ${bubbleClass}">
+                    <div style="font-size:18px;">${avtr}</div>
                     <div>
-                        <span style="font-size:10px; font-weight:bold; display:block; opacity:0.7;">\${data.sender}</span>
-                        \${data.message}
+                        <span style="font-size:10px; font-weight:bold; display:block; opacity:0.7;">${data.sender}</span>
+                        ${data.message}
                     </div>
                 </div>`;
             box.scrollTop = box.scrollHeight;
